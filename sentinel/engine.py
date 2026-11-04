@@ -49,10 +49,10 @@ class Event:
 
 
 class DeceptionEngine:
-    """Explore a synthetic graph with reproducible, budget-bounded policies.
+    """Explore one pre-generated synthetic graph with bounded, reproducible policies.
 
-    Policies are controlled algorithmic baselines, not models of real attackers.
-    The adaptive policy is a transparent heuristic, not machine learning.
+    Every policy receives the exact same graph for a given seed/configuration.
+    Adaptive is a transparent heuristic, not a learning model or attacker model.
     """
     KINDS = ("service", "document", "repository", "dashboard", "credential_hint")
     ADAPTIVE_PRIORITY = {
@@ -64,8 +64,19 @@ class DeceptionEngine:
         self.config = config or EngineConfig()
         self.config.validate()
         self.nodes: dict[str, Node] = {}
+        self.children: dict[str, list[Node]] = {}
         self.events: list[Event] = []
-        self._create_node(None, 0)
+        root = self._create_node(None, 0)
+        queue = [root]
+        while queue and len(self.nodes) < self.config.max_nodes:
+            parent = queue.pop(0)
+            if parent.depth >= self.config.max_depth:
+                continue
+            for _ in range(min(self.config.branching_factor,
+                               self.config.max_nodes - len(self.nodes))):
+                child = self._create_node(parent.node_id, parent.depth + 1)
+                self.children[parent.node_id].append(child)
+                queue.append(child)
 
     def _create_node(self, parent_id: str | None, depth: int) -> Node:
         ordinal = len(self.nodes)
@@ -79,6 +90,7 @@ class DeceptionEngine:
             depth=depth, parent_id=parent_id,
         )
         self.nodes[node.node_id] = node
+        self.children[node.node_id] = []
         return node
 
     def _record(self, event_type: str, node: Node, detail: str) -> None:
@@ -92,21 +104,26 @@ class DeceptionEngine:
 
         started = time.monotonic()
         rng = random.Random(self.config.seed ^ 0x5E17)
-        frontier = [next(iter(self.nodes.values()))]
+        root = next(iter(self.nodes.values()))
+        frontier = [root]
         visited: set[str] = set()
         steps = 0
 
         while frontier and steps < self.config.max_steps:
-            if policy in {"static_decoy", "bfs"}:
+            if policy == "static_decoy":
+                index = min(range(len(frontier)), key=lambda i: frontier[i].node_id)
+                current = frontier.pop(index)
+            elif policy == "bfs":
                 current = frontier.pop(0)
             elif policy == "dfs":
                 current = frontier.pop()
             elif policy == "random_walk":
                 current = frontier.pop(rng.randrange(len(frontier)))
             elif policy == "greedy":
-                index = max(range(len(frontier)), key=lambda i: self.ADAPTIVE_PRIORITY[frontier[i].kind])
+                index = max(range(len(frontier)),
+                            key=lambda i: self.ADAPTIVE_PRIORITY[frontier[i].kind])
                 current = frontier.pop(index)
-            else:  # adaptive: combine decoy attractiveness with a depth-seeking term
+            else:
                 index = max(
                     range(len(frontier)),
                     key=lambda i: self.ADAPTIVE_PRIORITY[frontier[i].kind] * 10 + frontier[i].depth,
@@ -123,12 +140,11 @@ class DeceptionEngine:
                 self._record("depth_budget_reached", current, "Maximum depth reached")
                 continue
 
-            count = min(self.config.branching_factor, self.config.max_nodes - len(self.nodes))
-            for _ in range(max(0, count)):
-                child = self._create_node(current.node_id, current.depth + 1)
+            children = self.children[current.node_id]
+            for child in children:
+                self._record("decoy_generated", child, "Pre-generated in the shared static graph")
                 frontier.append(child)
-                self._record("decoy_generated", child, "Generated within node budget")
-            if count <= 0:
+            if not children and len(self.nodes) >= self.config.max_nodes:
                 self._record("node_budget_reached", current, "Maximum node count reached")
 
         if frontier and steps >= self.config.max_steps:
