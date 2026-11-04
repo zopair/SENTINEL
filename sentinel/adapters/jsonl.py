@@ -64,7 +64,7 @@ def _validate(record: Any, line_number: int) -> TelemetryRecord:
                 raise ValueError(prefix + f"{field} must be a string <= 2048 chars")
     elif kind == "run_summary":
         _require_int(record["seed"], "seed", minimum=-(2**63))
-        if record["policy"] not in {"baseline", "adaptive"}:
+        if not isinstance(record["policy"], str) or record["policy"] not in {"baseline", "adaptive"}:
             raise ValueError(prefix + "invalid policy")
         if not isinstance(record["metrics"], dict):
             raise ValueError(prefix + "metrics must be an object")
