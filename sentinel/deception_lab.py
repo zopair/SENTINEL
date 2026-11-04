@@ -12,6 +12,7 @@ PROFILE_ACTIONS = {
     "deep_path": ("follow",) * 12,
     "validation": ("verify",) * 12,
     "detail_inspection": ("inspect",) * 12,
+    "asset_collector": ("enumerate", "follow", "collect") * 4,
     "mixed_explorer": (
         "inspect", "enumerate", "follow", "verify", "wait", "enumerate",
         "inspect", "follow", "verify", "wait", "enumerate", "inspect",
