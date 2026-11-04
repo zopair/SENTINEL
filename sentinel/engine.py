@@ -98,6 +98,7 @@ class DeceptionEngine:
 
     def run(self, policy: str = "baseline") -> dict[str, Any]:
         """Run one policy; baseline remains a backwards-compatible BFS alias."""
+        requested_policy = policy
         policy = POLICY_ALIASES.get(policy, policy)
         if policy not in POLICIES:
             raise ValueError(f"policy must be one of: {', '.join(POLICIES)}")
@@ -152,7 +153,7 @@ class DeceptionEngine:
 
         deepest = max((self.nodes[node_id].depth for node_id in visited), default=0)
         return {
-            "policy": policy, "config": asdict(self.config),
+            "policy": requested_policy, "config": asdict(self.config),
             "metrics": {
                 "nodes_created": len(self.nodes), "nodes_visited": len(visited),
                 "events": len(self.events), "steps": steps,
