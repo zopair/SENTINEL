@@ -44,8 +44,6 @@ class EngineConfig:
             raise ValueError(f"max_steps must be between 0 and {MAX_STEPS_LIMIT}")
         if not 1 <= self.branching_factor <= MAX_BRANCHING_LIMIT:
             raise ValueError(f"branching_factor must be between 1 and {MAX_BRANCHING_LIMIT}")
-        if isinstance(self.seed, bool) or not isinstance(self.seed, int) or not -(2**63) <= self.seed <= 2**63 - 1:
-            raise ValueError("seed must be a signed 64-bit integer")
 
 
 @dataclass
