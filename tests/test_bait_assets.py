@@ -47,7 +47,9 @@ def test_collecting_same_node_twice_does_not_duplicate_loot():
     assert lab.apparent_victory_score == score
 
 
-def test_loot_generation_never_uses_real_or_resolvable_service_hosts():
+def test_loot_generation_contains_no_live_urls_or_nonreserved_domains():
     assets = SyntheticLootGenerator.generate(1, "decoy-z", "credential_hint")
     for asset in assets:
-        assert ".invalid" in asset.content or "SYNTHETIC-VOID" in asset.content or True
+        assert "https://" not in asset.content
+        assert "http://" not in asset.content
+        assert "northstar.com" not in asset.content.lower()
