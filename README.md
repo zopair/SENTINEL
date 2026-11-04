@@ -3,16 +3,15 @@
 
 **The attacker follows the trail. SENTINEL controls where it leads.**
 
-SENTINEL is an open-source research prototype for bounded, measurable cyber deception. It generates synthetic attack surfaces and records how authorized test agents explore them without connecting experiments to real systems.
+SENTINEL is an open-source research prototype for bounded, measurable cyber deception. It generates synthetic decoy environments and records how authorized test agents explore them without connecting experiments to real systems.
 
 > **Status:** Early research prototype. Not a production security boundary, authentication product, public honeypot deployment, or certified security control.
 
 ## Principles
-- Synthetic-only content: no real credentials, customer data, or production endpoints.
 - The real system is never part of the maze; only synthetic decoy space evolves.
-- Bounded execution: explicit node, depth, step, time, process, memory, and output budgets.
+- No real credentials, customer data, or production endpoints in experiments.
+- Explicit node, depth, step, time, process, memory, and output budgets.
 - No outbound network or command execution in the deception core.
-- Structured telemetry and reproducible experiments.
 - Deception supplements—not replaces—access control, isolation, monitoring, and secure boot.
 
 ## Quick start
@@ -23,18 +22,19 @@ source .venv/bin/activate
 python -m pip install -e ".[dev]"
 pytest
 sentinel run --seed 7 --steps 20 --max-nodes 64
-sentinel labyrinth --seed 7 --actions inspect follow verify enumerate inspect
+sentinel labyrinth --seed 7 --actions inspect follow verify enumerate
+sentinel profiles --seeds 7 17 27
 sentinel compare --seeds 7 17 27 --steps 20 --jsonl
 ```
 
 ## Current prototype
 - Deterministic procedural graph with FIFO and adaptive-priority exploration.
 - Action-conditioned synthetic labyrinth with deterministic behavior classification and bounded challenge recommendations.
-- Matched-seed experiments, JSONL telemetry, and allowlisted built-in strategies.
-- Rootless Podman CI with configuration checks and bounded synthetic fixtures for filesystem/network denial, output, tmpfs, PID pressure, timeout, and cleanup.
+- Five scripted synthetic behavior profiles for repeatable, matched-budget evaluation.
+- Rootless Podman CI with configuration checks and bounded fixtures for filesystem/network denial, output, tmpfs, PID pressure, timeout, and cleanup.
 - A foundation for future external-agent containment; third-party agents are not integrated or enabled.
 
-The behavior classifier is transparent deterministic logic, not a trained neural model or a validated model of real attackers. CI demonstrates only the specific checks executed; it is not independent escape testing or security certification.
+Behavior classification and scripted profiles are transparent deterministic experiments, not trained neural models or validated models of real attackers. CI demonstrates only the checks executed; it is not independent escape testing or security certification.
 
 ## Safety
 Do not connect this prototype to production networks or expose it as a public honeypot. Never pass production credentials or customer data into an agent container. External-agent adapters require independent containment review before implementation.
