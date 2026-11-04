@@ -166,4 +166,3 @@ class DeceptionEngine:
             },
             "events": [asdict(event) for event in self.events],
         }
-}
