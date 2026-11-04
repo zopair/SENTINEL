@@ -46,8 +46,15 @@ pytest
 sentinel run --seed 7 --steps 20 --policy adaptive
 sentinel profiles --seeds 7 17 27
 sentinel compare --seeds $(seq 1 30) --steps 20 --jsonl > results.jsonl
+~~~
+
+Start the local browser interface in a separate terminal from the source checkout:
+
+~~~bash
 sentinel web --port 8765
 ~~~
+
+Then open `http://127.0.0.1:8765/`. The server is loopback-only.
 
 For reproducibility, preserve the exact command, package version, seed list, and output file with any reported result. The CLI default comparison uses 30 seeds.
 
