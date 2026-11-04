@@ -67,7 +67,7 @@ The comparison exports per-policy means, standard deviations, descriptive normal
 Read the Threat Model before interpreting results or extending the runtime. The core engine is in-memory and does not connect to production systems or perform outbound network operations. Do not connect this prototype to production networks or expose it as a public honeypot.
 
 ## Documentation
-[Research Guide](docs/RESEARCH_GUIDE.md) · [Validation Protocol](docs/VALIDATION_PROTOCOL.md) · [Architecture](docs/ARCHITECTURE.md) · [Threat Model](docs/THREAT_MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Research references](docs/RESEARCH_SOURCES.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Security policy](SECURITY.md)
+[Browser Research Lab](lab.html) · [Research Guide](docs/RESEARCH_GUIDE.md) · [Validation Protocol](docs/VALIDATION_PROTOCOL.md) · [Architecture](docs/ARCHITECTURE.md) · [Threat Model](docs/THREAT_MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Research references](docs/RESEARCH_SOURCES.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Security policy](SECURITY.md)
 
 ## Browser Visual Lab and JSONL analytics
 The SENTINEL Pages interface separates its illustrative browser maze from imported engine/CI evidence. The browser demonstration is not the Python engine or a live attack environment. The JSONL reader parses a selected file locally in the browser; it does not upload that file. Sample data is illustrative only. To view actual engine results, generate results.jsonl with the command above and load it in the page. The complete research definitions, metric semantics, statistical assumptions, threat boundaries, and reproduction procedure are in the Research Guide.
