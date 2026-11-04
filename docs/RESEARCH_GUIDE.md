@@ -227,7 +227,15 @@ sentinel compare --seeds $(seq 1 30) --steps 20 \
   --max-nodes 64 --max-depth 8 --branching-factor 3 --jsonl > results.jsonl
 ```
 
-Inspect `results.jsonl` in the browser's local JSONL reader. Do not treat the page's illustrative maze or sample dataset as measured engine output.
+Inspect `results.jsonl` in the browser's local JSONL reader. The browser-side illustrative maze is not measured engine output.
+
+To run the actual Python engine from the browser, start a separate terminal in the source checkout:
+
+```bash
+sentinel web --port 8765
+```
+
+Then open `http://127.0.0.1:8765/`. The server binds to loopback only; the static GitHub Pages site cannot execute Python.
 
 ## 11. Research roadmap and release gates
 
