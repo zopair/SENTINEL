@@ -16,7 +16,7 @@ HOST_NETNS="$(stat -Lc '%i' /proc/self/ns/net)" \
   --cpus=0.50 --user=10001:10001 \
   --tmpfs=/tmp:rw,noexec,nosuid,nodev,size=16m \
   -e SENTINEL_HOST_NETNS="$HOST_NETNS" \
-  --entrypoint python sentinel-core:local -m sentinel.containment_probe
+  --entrypoint python sentinel-core:local /app/lab/podman/containment_probe.py
 ./lab/podman/run-agent-simulation.sh --seeds 7 17 27
 ```
 

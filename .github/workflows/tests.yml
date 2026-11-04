@@ -68,7 +68,7 @@ jobs:
             --tmpfs=/tmp:rw,noexec,nosuid,nodev,size=16m \
             -e SENTINEL_HOST_NETNS="$HOST_NETNS" \
             --entrypoint python sentinel-core:ci \
-            -m sentinel.containment_probe
+            /app/lab/podman/containment_probe.py
       - name: Run agents only inside the verified sandbox profile
         run: |
           chmod +x lab/podman/run-agent-simulation.sh
