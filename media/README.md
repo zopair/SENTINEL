@@ -12,7 +12,7 @@ Local setup (Python 3.11 recommended):
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r media/requirements.txt
-manim -pqh --fps 30 media/sentinel_explainer.py SentinelExplainer
+manim -pqh --fps 60 media/sentinel_explainer.py SentinelExplainer
 ```
 
 For a faster draft, replace `-pqh` with `-pql`.
