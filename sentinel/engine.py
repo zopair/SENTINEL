@@ -27,6 +27,15 @@ class EngineConfig:
     branching_factor: int = 3
 
     def validate(self) -> None:
+        for field, value in (
+            ("seed", self.seed), ("max_nodes", self.max_nodes),
+            ("max_depth", self.max_depth), ("max_steps", self.max_steps),
+            ("branching_factor", self.branching_factor),
+        ):
+            if isinstance(value, bool) or not isinstance(value, int):
+                raise ValueError(f"{field} must be an integer")
+        if not -(2**63) <= self.seed <= 2**63 - 1:
+            raise ValueError("seed must be a signed 64-bit integer")
         if not 1 <= self.max_nodes <= MAX_NODES_LIMIT:
             raise ValueError(f"max_nodes must be between 1 and {MAX_NODES_LIMIT}")
         if not 0 <= self.max_depth <= MAX_DEPTH_LIMIT:
