@@ -31,7 +31,7 @@ This is a narrow, testable question. SENTINEL does not claim that an attacker, i
 | DFS | LIFO frontier | Depth-first baseline |
 | Adaptive | Decoy-kind priority combined with depth | SENTINEL heuristic under evaluation |
 
-The graph is generated lazily and deterministically under matched seeds and budgets. Static Decoy is a non-adaptive selection control, not a separately pre-generated immutable graph. The legacy baseline name remains an alias for BFS.
+Every policy receives the same deterministic graph pre-generated from the seed and configuration. Static Decoy uses a fixed identifier ordering without behavior-based reprioritization; BFS uses a FIFO queue. The legacy baseline name remains an alias for BFS.
 
 ## Quick start
 Python 3.10+:
