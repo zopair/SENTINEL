@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: sentinel-explainer-render
@@ -47,6 +47,21 @@ jobs:
           mkdir -p rendered
           find media -type f -name 'SentinelExplainer.mp4' -exec cp {} rendered/SENTINEL-explainer-1080p-60fps.mp4 \;
           test -s rendered/SENTINEL-explainer-1080p-60fps.mp4
+
+      - name: Publish rendered MP4 into the source branch
+        env:
+          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp rendered/SENTINEL-explainer-1080p-60fps.mp4 media/SENTINEL-explainer.mp4
+          git add media/SENTINEL-explainer.mp4
+          if git diff --cached --quiet; then
+            echo "Rendered MP4 is already current."
+          else
+            git commit -m "Publish generated SENTINEL explainer video"
+            git push origin "HEAD:${TARGET_BRANCH}"
+          fi
 
       - name: Upload rendered video
         uses: actions/upload-artifact@v4
