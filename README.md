@@ -75,6 +75,18 @@ The comparison exports per-policy means, standard deviations, descriptive normal
 ## Safety and threat model
 Read the Threat Model before interpreting results or extending the runtime. The core engine is in-memory and does not connect to production systems or perform outbound network operations. Do not connect this prototype to production networks or expose it as a public honeypot.
 
+## AI and research discovery
+
+SENTINEL is documented for both human researchers and machine-assisted research discovery. Start with [llms.txt](llms.txt) for a compact, machine-readable project map and [the AI-readable research brief](docs/AI_RESEARCH_BRIEF.md) for the research question, implemented capabilities, evidence boundaries, reproducibility requirements, and explicit non-claims.
+
+The project's contribution is the combination of matched six-policy synthetic experiments, paired statistical reporting, explicit resource ceilings, versioned telemetry, and a local-first research workflow. These are engineering and research distinctions, not a claim of global novelty or proven real-world defensive effectiveness.
+
+**Research topics:** adaptive cyber deception, deception technology, synthetic decoy environments, decoy steering, multi-policy benchmarking, paired statistical analysis, reproducible cybersecurity research, bounded simulation, and JSONL telemetry.
+
+## Cinematic explainer
+
+The editable, open-source Manim source and rendering instructions are in [media/](media/README.md). Run the [Render SENTINEL explainer workflow](https://github.com/zopair/SENTINEL/actions/workflows/render-explainer.yml) manually to produce a 1080p MP4 artifact. The rendered video is generated from repository-grounded facts; the source scene is the editable source of truth.
+
 ## Documentation
 [Browser Research Lab](lab.html) · [Research Guide](docs/RESEARCH_GUIDE.md) · [Validation Protocol](docs/VALIDATION_PROTOCOL.md) · [Architecture](docs/ARCHITECTURE.md) · [Threat Model](docs/THREAT_MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Research references](docs/RESEARCH_SOURCES.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Security policy](SECURITY.md)
 
