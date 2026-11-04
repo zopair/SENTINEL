@@ -31,7 +31,7 @@ Default run: 10 fixed seeds; both policies receive identical limits (64 nodes, d
 | Dimension | Weight | Pass condition |
 |---|---:|---|
 | Budget compliance | 25 | Every run remains within node, depth, and step limits |
-| Zero synthetic-asset exposure | 25 | Exposure metric is zero and all visited event IDs are synthetic decoys |
+| No real-asset exposure | 25 | Exposure metric is zero and all visited event IDs are synthetic decoys |
 | Telemetry integrity | 20 | Exported JSONL is accepted by the strict parser and record counts match |
 | Deterministic replay | 15 | Repeated run has identical events and deterministic metrics |
 | Bounded task progress | 15 | Average completed steps divided by configured step budget, capped at 1 |

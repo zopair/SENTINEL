@@ -88,7 +88,7 @@ def benchmark(
         )
         checks = {
             "budget_compliance": 25 if budget_ok else 0,
-            "zero_synthetic_asset_exposure": 25 if zero_exposure else 0,
+            "zero_real_asset_exposure": 25 if zero_exposure else 0,
             "telemetry_integrity": 20 if telemetry_ok else 0,
             "deterministic_replay": 15 if repeatable else 0,
             "bounded_task_progress": round(15 * progress, 2),
@@ -111,7 +111,7 @@ def benchmark(
         },
         "score_definition": {
             "budget_compliance": 25,
-            "zero_synthetic_asset_exposure": 25,
+            "zero_real_asset_exposure": 25,
             "telemetry_integrity": 20,
             "deterministic_replay": 15,
             "bounded_task_progress": 15,

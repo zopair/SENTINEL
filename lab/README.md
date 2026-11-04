@@ -30,7 +30,7 @@ The preflight inspects effective container configuration. The runtime probe addi
 
 The benchmark score is out of 100:
 - Budget compliance: 25
-- Zero synthetic-asset exposure: 25
+- No real-asset exposure: 25
 - Telemetry integrity: 20
 - Deterministic replay: 15
 - Bounded task progress: 15
