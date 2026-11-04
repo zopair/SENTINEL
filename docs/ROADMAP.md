@@ -30,7 +30,7 @@
 - [x] Require rootless Podman and fail closed if rootless mode cannot be verified.
 - [x] Enforce networkless, read-only, non-root, no-capability, no-new-privileges execution with no host mounts.
 - [x] Bound captured output and clean up the disposable container on timeout or output overflow.
-- [ ] Add bounded adversarial fixtures and verify timeout/output cleanup in Linux CI.
+- [x] Add bounded synthetic adversarial fixtures and verify filesystem/network denial, output caps, and timeout cleanup in Linux CI.
 - [ ] Add independent escape-oriented review of the effective runtime profile.
 - [ ] Add an external-agent adapter only after the adversarial containment gate passes.
 

@@ -7,7 +7,7 @@ from typing import Sequence
 
 
 _IMAGE_DIGEST = re.compile(
-    r"^[A-Za-z0-9][A-Za-z0-9._/:+-]*@sha256:[0-9a-f]{64}$"
+    r"^(?:[A-Za-z0-9][A-Za-z0-9._/:+-]*@)?sha256:[0-9a-f]{64}$"
 )
 
 

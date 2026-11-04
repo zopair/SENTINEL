@@ -31,6 +31,7 @@ sentinel compare --seeds 7 17 27 --steps 20 --jsonl
 - Allowlisted built-in agent runtime with a reproducible 100-point synthetic benchmark.
 - Rootless Podman Linux CI job that builds the synthetic image, checks effective settings, probes runtime containment properties, and runs the built-in agents in the container.
 - Initial external-agent containment gateway with immutable image digests, rootless-only execution, deny-by-default isolation, bounded resources, and capped output; third-party agents are not yet integrated.
+- Linux CI integration exercises a synthetic fixture through the gateway, including filesystem/network denial, output caps, and timeout cleanup.
 - JSON and versioned JSONL event/summary output.
 - Read-only JSONL telemetry parser with strict record types, schema version checks, field allowlists, and input-size limits.
 - Metrics: visited/created nodes, deepest level, interaction rate, and step-budget utilization.

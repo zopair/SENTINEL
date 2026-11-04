@@ -53,6 +53,42 @@ jobs:
           test "$(podman info --format '{{.Host.Security.Rootless}}')" = "true"
       - name: Build synthetic-only image
         run: podman build -f lab/podman/Containerfile -t sentinel-core:ci .
+      - name: Build pinned agent fixture image
+        run: podman build -f lab/podman/AgentFixture.Containerfile -t sentinel-agent-fixture:ci .
+      - name: Exercise the containment gateway against synthetic agent fixtures
+        env:
+          PYTHONPATH: .
+        run: |
+          AGENT_IMAGE="$(podman image inspect --format '{{.Id}}' sentinel-agent-fixture:ci)"
+          SENTINEL_FIXTURE_IMAGE="$AGENT_IMAGE" python3 - <<'PY'
+          import json
+          import os
+          from sentinel.containment import AgentRunSpec, ContainmentPolicy, PodmanRunner
+
+          image = os.environ["SENTINEL_FIXTURE_IMAGE"]
+          runner = PodmanRunner()
+
+          probe = runner.run(AgentRunSpec(image=image, command=["probe"]))
+          assert probe.status == "completed" and probe.exit_code == 0, probe
+          facts = json.loads(probe.output)
+          assert facts["non_root"] and facts["capabilities_zero"]
+          assert facts["no_new_privileges"] and facts["filesystem_write_blocked"]
+          assert facts["network_blocked"], facts
+
+          output = runner.run(AgentRunSpec(
+              image=image, command=["output"],
+              policy=ContainmentPolicy(output_limit_bytes=1024),
+          ))
+          assert output.status == "output_limit_exceeded"
+          assert output.output_truncated and len(output.output.encode()) == 1024
+
+          timed = runner.run(AgentRunSpec(
+              image=image, command=["sleep"],
+              policy=ContainmentPolicy(timeout_seconds=1),
+          ))
+          assert timed.status == "timed_out"
+          print("PASS: gateway probe, filesystem/network denial, output cap, and timeout cleanup")
+          PY
       - name: Verify effective container configuration
         run: |
           chmod +x lab/podman/preflight.sh
