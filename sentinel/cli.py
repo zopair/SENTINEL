@@ -4,21 +4,20 @@ import json
 
 from sentinel.deception import AdaptiveLabyrinth, LabyrinthConfig
 from sentinel.deception_lab import evaluate_profiles
-from sentinel.engine import DeceptionEngine, EngineConfig
+from sentinel.engine import DeceptionEngine, EngineConfig, POLICIES
 from sentinel.experiments import compare_policies, to_jsonl
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run bounded synthetic SENTINEL experiments")
     sub = parser.add_subparsers(dest="command", required=True)
-
     run = sub.add_parser("run", help="explore one synthetic deception graph")
     run.add_argument("--seed", type=int, default=7)
     run.add_argument("--steps", type=int, default=20)
     run.add_argument("--max-nodes", type=int, default=64)
     run.add_argument("--max-depth", type=int, default=8)
     run.add_argument("--branching-factor", type=int, default=3)
-    run.add_argument("--policy", choices=("baseline", "adaptive"), default="baseline")
+    run.add_argument("--policy", choices=("baseline", *POLICIES), default="baseline")
 
     labyrinth = sub.add_parser("labyrinth", help="run an adaptive synthetic labyrinth session")
     labyrinth.add_argument("--seed", type=int, default=7)
@@ -36,8 +35,8 @@ def main() -> None:
     profiles.add_argument("--max-nodes", type=int, default=64)
     profiles.add_argument("--max-depth", type=int, default=8)
 
-    compare = sub.add_parser("compare", help="compare baseline and adaptive policies")
-    compare.add_argument("--seeds", type=int, nargs="+", default=[7, 17, 27])
+    compare = sub.add_parser("compare", help="compare six policies on matched seeds")
+    compare.add_argument("--seeds", type=int, nargs="+", default=list(range(30)))
     compare.add_argument("--steps", type=int, default=20)
     compare.add_argument("--max-nodes", type=int, default=64)
     compare.add_argument("--max-depth", type=int, default=8)
@@ -56,19 +55,14 @@ def main() -> None:
             max_depth=args.max_depth, branching_factor=args.branching_factor,
         )).run(args.actions)
     elif args.command == "profiles":
-        result = evaluate_profiles(
-            args.seeds, max_nodes=args.max_nodes, max_depth=args.max_depth,
-            max_steps=args.steps,
-        )
+        result = evaluate_profiles(args.seeds, max_nodes=args.max_nodes,
+                                   max_depth=args.max_depth, max_steps=args.steps)
     else:
-        result = compare_policies(
-            args.seeds, max_nodes=args.max_nodes, max_depth=args.max_depth,
-            max_steps=args.steps, branching_factor=args.branching_factor,
-        )
-    if args.command == "compare" and args.jsonl:
-        print(to_jsonl(result))
-    else:
-        print(json.dumps(result, indent=2))
+        result = compare_policies(args.seeds, max_nodes=args.max_nodes,
+                                  max_depth=args.max_depth, max_steps=args.steps,
+                                  branching_factor=args.branching_factor)
+    print(to_jsonl(result) if args.command == "compare" and args.jsonl
+          else json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":
