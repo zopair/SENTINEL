@@ -37,3 +37,9 @@ The GitHub Actions workflow `.github/workflows/render-explainer.yml` can render 
 4. Engineering discipline: resource ceilings and schema 2.0 telemetry.
 5. Local research lab and the project’s evidence boundaries.
 6. Closing identity: **SENTINEL — Don't just detect the path. Redesign the path.**
+
+
+## Published visual assets
+
+- `sentinel-visual.svg` is the lightweight hero illustration used by the project site and README.
+- `SENTINEL-explainer.mp4` is the rendered 1080p/60fps explainer embedded on the GitHub Pages site. The render workflow refreshes this file from the editable Manim source.
