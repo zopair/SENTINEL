@@ -1,4 +1,8 @@
 # SENTINEL
+
+![SENTINEL — autoplaying cinematic overview](media/sentinel-preview.gif)
+
+**[Open the full 1080p cinematic video](media/SENTINEL-explainer.mp4)** · [Open the bilingual research lab](https://zopair.github.io/SENTINEL/lab.html)
 ### Adaptive Cyber Deception Research Lab
 
 **The attacker follows the trail. SENTINEL controls where it leads.**
@@ -6,6 +10,8 @@
 SENTINEL is an open-source cybersecurity research prototype exploring adaptive cyber deception in a bounded, fictional environment. It generates inert synthetic decoy assets, runs controlled exploration policies, and exports reproducible telemetry.
 
 > **Status:** Research prototype · version 0.1.0 · not a production security boundary, public honeypot, authentication system, or certified security control.
+
+![SENTINEL research visual](media/sentinel-visual.svg)
 
 ## Research question
 Can a deterministic adaptive exploration heuristic change how a scripted explorer spends a fixed interaction budget inside a synthetic decoy graph, compared with non-adaptive and standard search baselines?
@@ -74,6 +80,18 @@ The comparison exports per-policy means, standard deviations, descriptive normal
 
 ## Safety and threat model
 Read the Threat Model before interpreting results or extending the runtime. The core engine is in-memory and does not connect to production systems or perform outbound network operations. Do not connect this prototype to production networks or expose it as a public honeypot.
+
+## AI and research discovery
+
+SENTINEL is documented for both human researchers and machine-assisted research discovery. Start with [llms.txt](llms.txt) for a compact, machine-readable project map and [the AI-readable research brief](docs/AI_RESEARCH_BRIEF.md) for the research question, implemented capabilities, evidence boundaries, reproducibility requirements, and explicit non-claims.
+
+The project's contribution is the combination of matched six-policy synthetic experiments, paired statistical reporting, explicit resource ceilings, versioned telemetry, and a local-first research workflow. These are engineering and research distinctions, not a claim of global novelty or proven real-world defensive effectiveness.
+
+**Research topics:** adaptive cyber deception, deception technology, synthetic decoy environments, decoy steering, multi-policy benchmarking, paired statistical analysis, reproducible cybersecurity research, bounded simulation, and JSONL telemetry.
+
+## Cinematic explainer
+
+The editable, open-source Manim source and rendering instructions are in [media/](media/README.md). Run the [Render SENTINEL explainer workflow](https://github.com/zopair/SENTINEL/actions/workflows/render-explainer.yml) manually to produce a 1080p MP4 artifact. The rendered video is generated from repository-grounded facts; the source scene is the editable source of truth.
 
 ## Documentation
 [Browser Research Lab](lab.html) · [Research Guide](docs/RESEARCH_GUIDE.md) · [Validation Protocol](docs/VALIDATION_PROTOCOL.md) · [Architecture](docs/ARCHITECTURE.md) · [Threat Model](docs/THREAT_MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Research references](docs/RESEARCH_SOURCES.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Security policy](SECURITY.md)

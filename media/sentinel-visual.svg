@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+<title id="title">SENTINEL — Adaptive Cyber Deception Research</title>
+<desc id="desc">A bounded synthetic labyrinth with six deterministic exploration paths, decoy nodes, and a protected real-assets boundary.</desc>
+<defs>
+  <radialGradient id="bg" cx="52%" cy="42%" r="75%"><stop offset="0" stop-color="#142a3a"/><stop offset=".62" stop-color="#0b111a"/><stop offset="1" stop-color="#070a10"/></radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5dfa0"/><stop offset="1" stop-color="#b58b2a"/></linearGradient>
+  <linearGradient id="teal" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#4ee5d0"/><stop offset="1" stop-color="#8af5df"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#284052" stroke-opacity=".24" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="760" rx="28" fill="url(#bg)"/><rect width="1200" height="760" rx="28" fill="url(#grid)"/>
+<g font-family="Inter,Segoe UI,Arial,sans-serif">
+  <text x="72" y="74" fill="#d4af37" font-size="17" letter-spacing="5">OPEN-SOURCE CYBER DECEPTION RESEARCH</text>
+  <text x="70" y="148" fill="#f2e6c8" font-size="66" font-weight="750" letter-spacing="5">SENTINEL</text>
+  <text x="74" y="190" fill="#a9bdc9" font-size="20">Don't just detect the path. <tspan fill="#d4af37" font-weight="700">Redesign the path.</tspan></text>
+  <g transform="translate(58 236)">
+    <rect width="1084" height="420" rx="20" fill="#09121b" fill-opacity=".8" stroke="#385063"/>
+    <text x="30" y="42" fill="#d4af37" font-size="14" letter-spacing="3">BOUNDED SYNTHETIC ENVIRONMENT</text>
+    <g stroke="#4b6576" stroke-width="3" stroke-opacity=".55" fill="none">
+      <path d="M100 225L220 110L365 205L500 95L650 205L790 115L955 220"/>
+      <path d="M100 225L220 340L365 205L500 330L650 205L790 335L955 220"/>
+      <path d="M220 110L220 340M500 95L500 330M790 115L790 335M365 205L650 205"/>
+      <path d="M100 225L365 205L500 95L790 115L955 220"/>
+    </g>
+    <g fill="#101e2a" stroke="#d4af37" stroke-width="3">
+      <circle cx="100" cy="225" r="13"/><circle cx="220" cy="110" r="11"/><circle cx="365" cy="205" r="12"/><circle cx="500" cy="95" r="11"/><circle cx="650" cy="205" r="12"/><circle cx="790" cy="115" r="11"/><circle cx="955" cy="220" r="13"/><circle cx="220" cy="340" r="10"/><circle cx="500" cy="330" r="10"/><circle cx="790" cy="335" r="10"/>
+    </g>
+    <g fill="none" stroke-linecap="round" stroke-width="5" filter="url(#glow)">
+      <path d="M100 225L220 110L365 205L500 95L650 205L790 335" stroke="#d4af37"/>
+      <path d="M100 225L220 340L365 205L500 330L650 205L790 115" stroke="#55d8c9"/>
+      <path d="M100 225L365 205L500 330L790 335L955 220" stroke="#9a82db" stroke-opacity=".9"/>
+      <path d="M100 225L220 110L500 95L790 115L955 220" stroke="#e59b67" stroke-opacity=".9"/>
+      <path d="M100 225L220 340L500 330L650 205L955 220" stroke="#79a8ed" stroke-opacity=".9"/>
+      <path d="M100 225L365 205L650 205L790 115L955 220" stroke="#f0d58a" stroke-opacity=".9"/>
+    </g>
+    <circle cx="100" cy="225" r="25" fill="none" stroke="#4ee5d0" stroke-width="2" filter="url(#glow)"/>
+    <text x="100" y="275" text-anchor="middle" fill="#4ee5d0" font-size="13" letter-spacing="2">ENTRY</text>
+    <g transform="translate(820 48)">
+      <rect width="228" height="88" rx="12" fill="#0e202b" stroke="#4ee5d0" stroke-opacity=".7"/>
+      <text x="18" y="31" fill="#4ee5d0" font-size="13" letter-spacing="2">SIX POLICIES</text>
+      <text x="18" y="61" fill="#f2e6c8" font-size="25" font-weight="700">1 GRAPH · 6 PATHS</text>
+    </g>
+    <g transform="translate(830 300)">
+      <rect width="218" height="82" rx="12" fill="#25151a" stroke="#d96b63" stroke-width="1.5"/>
+      <text x="18" y="29" fill="#f09b94" font-size="13" letter-spacing="2">REAL ASSETS</text>
+      <text x="18" y="56" fill="#f2e6c8" font-size="17" font-weight="650">OUTSIDE THE MAZE</text>
+      <path d="M-22 40H-58" stroke="#d96b63" stroke-width="2" stroke-dasharray="5 6"/>
+    </g>
+  </g>
+  <text x="72" y="710" fill="#a9bdc9" font-size="15" letter-spacing="2">MATCHED EXPERIMENTS · PAIRED EVIDENCE · EXPLICIT RESOURCE BOUNDS</text>
+  <text x="1128" y="710" text-anchor="end" fill="#d4af37" font-size="15">RESEARCH PROTOTYPE</text>
+</g></svg>

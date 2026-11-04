@@ -1,0 +1,40 @@
+# SENTINEL
+
+> Open-source research framework for studying adaptive cyber deception inside bounded synthetic environments.
+
+SENTINEL investigates how deterministic exploration policies allocate a finite interaction budget across a fictional decoy graph. It combines matched multi-policy experiments, paired statistical reporting, explicit resource ceilings, synthetic telemetry, and a local browser research lab.
+
+## Start here
+- [Project overview](README.md)
+- [AI and research brief](docs/AI_RESEARCH_BRIEF.md)
+- [Research guide](docs/RESEARCH_GUIDE.md)
+- [Threat model](docs/THREAT_MODEL.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Validation protocol](docs/VALIDATION_PROTOCOL.md)
+- [Research sources](docs/RESEARCH_SOURCES.md)
+- [Browser research lab](lab.html)
+
+## What is distinctive
+- Six deterministic exploration policies: Static Decoy, Random Walk, Greedy, BFS, DFS, and Adaptive.
+- Matched comparisons: policies receive the same pre-generated synthetic graph for each seed/configuration.
+- Paired per-seed differences, descriptive 95% confidence intervals, 10,000-draw paired sign-flip Monte Carlo tests, and Holm adjustment.
+- Explicit application ceilings: 4,096 nodes, depth 64, 4,096 steps, branching factor 1–8, and bounded experiment/output inputs.
+- JSON/JSONL schema 2.0 telemetry.
+- Local-first bilingual research interface; optional real Python engine through a standard-library server bound to 127.0.0.1.
+
+## Important limitations
+- The evidence is synthetic and does not establish real-world defensive effectiveness.
+- Adaptive is a deterministic hand-designed heuristic, not a trained or learning agent.
+- Built-in profiles are scripted strategies, not autonomous LLM agents.
+- Deception discovery and real-asset displacement are not currently operationally measured.
+- This is a research prototype, not a production honeypot, security boundary, or certified control.
+- Untrusted external agents and production integrations are out of scope.
+
+## Reproducibility
+Use the exact commit, Python version, command, configuration, seed list, and JSONL output when reporting results. Follow the reproduction procedure in the Research Guide. Report negative and inconclusive results as well as positive ones.
+
+## Citation
+See [CITATION.cff](CITATION.cff). Cite the exact commit and experiment configuration used.
+
+## Keywords
+cyber deception, adaptive cyber deception, deception technology research, synthetic decoy environments, decoy steering, cybersecurity experimentation, multi-policy benchmarking, paired statistical analysis, reproducible research, bounded simulation, JSONL telemetry, local research laboratory
