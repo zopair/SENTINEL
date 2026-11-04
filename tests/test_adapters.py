@@ -87,6 +87,7 @@ def test_accepts_all_supported_record_types():
     event_record(sequence=True),
     event_record(seed=2**63),
     event_record(node_id=17),
+    event_record(policy=[]),
 ])
 def test_rejects_invalid_event_envelopes(record):
     with pytest.raises(ValueError):
@@ -97,6 +98,11 @@ def test_rejects_invalid_nested_metrics_and_real_asset_exposure():
     metrics = valid_metrics()
     metrics["nodes_visited"] = True
     with pytest.raises(ValueError, match="numeric"):
+        parse_jsonl([summary_record(metrics=metrics)])
+
+    metrics = valid_metrics()
+    metrics["elapsed_ms"] = 10**1000
+    with pytest.raises(ValueError, match="integer range"):
         parse_jsonl([summary_record(metrics=metrics)])
 
     metrics = valid_metrics()

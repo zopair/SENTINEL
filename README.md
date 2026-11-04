@@ -54,6 +54,7 @@ Do not connect this prototype to production networks or expose it as a public ho
 - [Roadmap](docs/ROADMAP.md)
 - [Research references](docs/RESEARCH_SOURCES.md)
 - [Computing and isolation options](docs/COMPUTING_AND_ISOLATION_OPTIONS.md)
+- [Open-source tooling inventory and security gates](docs/OPEN_SOURCE_TOOLING.md)
 - [Security policy](SECURITY.md)
 - [Lab guide](lab/README.md)
 - [Lab containment design](lab/CONTAINMENT_DESIGN.md)

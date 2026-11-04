@@ -53,6 +53,10 @@ def _require_int(value: Any, field: str, *, minimum: int = 0) -> None:
 def _require_text(value: Any, field: str, *, maximum: int = MAX_TEXT_CHARS) -> None:
     if not isinstance(value, str) or len(value) > maximum:
         raise ValueError(f"{field} must be a string <= {maximum} chars")
+    try:
+        value.encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise ValueError(f"{field} must contain valid Unicode scalar values") from exc
 
 
 def _validate_metrics(metrics: Any, prefix: str) -> None:
@@ -61,8 +65,12 @@ def _validate_metrics(metrics: Any, prefix: str) -> None:
     for field, value in metrics.items():
         if isinstance(value, bool) or not isinstance(value, (int, float)):
             raise ValueError(prefix + f"metrics.{field} must be numeric")
-        if not math.isfinite(value) or value < 0:
-            raise ValueError(prefix + f"metrics.{field} must be finite and non-negative")
+        if isinstance(value, int) and value > (2**63 - 1):
+            raise ValueError(prefix + f"metrics.{field} exceeds the supported integer range")
+        if isinstance(value, float) and not math.isfinite(value):
+            raise ValueError(prefix + f"metrics.{field} must be finite")
+        if value < 0:
+            raise ValueError(prefix + f"metrics.{field} must be non-negative")
         if field in COUNT_METRICS and not isinstance(value, int):
             raise ValueError(prefix + f"metrics.{field} must be an integer")
     if metrics["interaction_rate"] > 1:
@@ -97,13 +105,13 @@ def _validate(record: Any, line_number: int) -> TelemetryRecord:
         _require_int(record["seed"], "seed", minimum=-(2**63))
         _require_int(record["sequence"], "sequence", minimum=1)
         _require_int(record["depth"], "depth")
-        if record["policy"] not in POLICIES:
+        if not isinstance(record["policy"], str) or record["policy"] not in POLICIES:
             raise ValueError(prefix + "invalid policy")
         for field in ("node_id", "event_type", "detail"):
             _require_text(record[field], field)
     elif kind == "run_summary":
         _require_int(record["seed"], "seed", minimum=-(2**63))
-        if record["policy"] not in POLICIES:
+        if not isinstance(record["policy"], str) or record["policy"] not in POLICIES:
             raise ValueError(prefix + "invalid policy")
         _validate_metrics(record["metrics"], prefix)
     else:
