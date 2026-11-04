@@ -23,7 +23,7 @@ EVENT_FIELDS = {"schema_version", "record_type", "seed", "policy", "sequence",
 SUMMARY_FIELDS = {"schema_version", "record_type", "seed", "policy", "metrics"}
 EXPERIMENT_FIELDS_V1 = {"schema_version", "record_type", "experiment", "seeds", "summary"}
 EXPERIMENT_FIELDS_V2 = EXPERIMENT_FIELDS_V1 | {
-    "paired_difference_vs_static_decoy", "limitations"
+    "paired_difference_vs_static_decoy", "paired_tests_vs_static_decoy", "limitations"
 }
 METRIC_FIELDS = {"nodes_created", "nodes_visited", "events", "steps",
                  "deepest_visited_level", "interaction_rate",
@@ -161,6 +161,22 @@ def _validate(record: Any, line_number: int) -> TelemetryRecord:
                         raise ValueError(prefix + "invalid paired interval fields")
                     for field, value in interval.items():
                         _number(value, f"paired.{field}", nonnegative=(field == "sd"))
+            tests = record["paired_tests_vs_static_decoy"]
+            if not isinstance(tests, dict) or set(tests) != expected_paired:
+                raise ValueError(prefix + "paired test policy set does not match")
+            for metrics in tests.values():
+                if not isinstance(metrics, dict) or set(metrics) != EXPERIMENT_METRIC_FIELDS:
+                    raise ValueError(prefix + "paired test metric set does not match")
+                for test in metrics.values():
+                    if not isinstance(test, dict) or set(test) != {"method", "permutations", "p_value", "p_value_holm"}:
+                        raise ValueError(prefix + "invalid paired test fields")
+                    if test["method"] != "paired_sign_flip_permutation_monte_carlo":
+                        raise ValueError(prefix + "unsupported paired test method")
+                    _require_int(test["permutations"], "permutations", minimum=1)
+                    for field in ("p_value", "p_value_holm"):
+                        _number(test[field], field)
+                        if not 0 <= test[field] <= 1:
+                            raise ValueError(prefix + "p-values must be between 0 and 1")
             limitations = record["limitations"]
             if not isinstance(limitations, list) or any(not isinstance(x, str) for x in limitations):
                 raise ValueError(prefix + "limitations must be an array of strings")
