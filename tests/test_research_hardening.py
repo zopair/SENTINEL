@@ -60,3 +60,12 @@ def test_engine_rejects_boolean_numeric_configuration(field):
 def test_engine_rejects_fractional_configuration(field):
     with pytest.raises(ValueError):
         EngineConfig(**{field: 2.5}).validate()
+
+def test_comparison_rejects_duplicate_seeds():
+    with pytest.raises(ValueError, match="unique"):
+        compare_policies([4, 4], max_nodes=8, max_steps=4)
+
+
+def test_comparison_rejects_estimated_telemetry_overflow():
+    with pytest.raises(ValueError, match="estimated JSONL records"):
+        compare_policies([1, 2, 3], max_nodes=4096, max_steps=20)
