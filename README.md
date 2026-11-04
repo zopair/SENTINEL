@@ -75,3 +75,15 @@ Compare baseline and adaptive policies with matched seeds and budgets. Useful me
 Cyber deception · deception technology · adaptive honeypot · synthetic honeypot · AI agent security · agentic AI security · autonomous agent behavior · cyber defense research · threat research · red team simulation · blue team · cyber range · decoy assets · security experimentation · Python · open source cybersecurity · containment testing · adaptive cyber defense.
 
 MIT License. See [LICENSE](LICENSE).
+
+## Browser Visual Lab & JSONL Analytics
+
+The GitHub Pages presentation now includes a client-side illustrative maze simulator and a local JSONL analytics reader. The simulator is a visual teaching demo (not the Python engine or a live attack environment). The analytics panel parses `run_summary` records directly in the browser, shows summary metrics and a policy chart, and does not upload the selected file.
+
+To load real experiment results, run:
+
+```bash
+sentinel compare --seeds 7 17 27 --steps 20 --jsonl > results.jsonl
+```
+
+Open the [SENTINEL Pages presentation](https://zopair.github.io/SENTINEL/) and choose the JSONL file in the analytics panel. The included sample dataset is illustrative only and is not a benchmark claim.
