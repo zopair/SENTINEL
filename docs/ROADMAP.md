@@ -5,22 +5,25 @@
 - [x] Deterministic synthetic graph generator.
 - [x] Bounded exploration and structured JSON output.
 - [x] Tests for determinism and resource limits.
-- [ ] Verify CI on GitHub.
+- [x] GitHub Actions test workflow verified.
 
 ## v0.2 — Experiment science
-- [ ] Versioned JSONL event export.
-- [ ] Baseline vs adaptive policy runner.
-- [ ] Metrics: exploration depth, dwell time, decoy interaction rate, false engagement, budget use.
-- [ ] Repeated-seed reports and confidence intervals.
+- [x] FIFO baseline and adaptive-priority exploration policies.
+- [x] Multi-seed comparison runner with matched budgets.
+- [x] Versioned JSONL event and summary export.
+- [x] Metrics: exploration depth, visited/created ratio, and budget utilization.
+- [ ] Add confidence intervals after collecting larger experiment batches.
+- [ ] Validate the adaptive heuristic against documented agent-behavior datasets.
 
 ## v0.3 — Isolated agent lab
 - [ ] Disposable VM/container adapter with deny-by-default egress.
-- [ ] CPU, memory, process, storage, and time quotas.
+- [ ] CPU, memory, process, storage, and wall-clock quotas.
 - [ ] Read-only agent telemetry adapter.
 - [ ] Escape/containment test suite.
+- [ ] Independent review of isolation design before external-agent execution.
 
 ## v0.4 — Trusted access research
-- [ ] Nonce/signature protocol and replay analysis.
+- [ ] Nonce/signature protocol and replay/relay analysis.
 - [ ] TPM2-backed key proof of concept on supported hardware.
 - [ ] GGWave transport experiment compared with QR/BLE/NFC.
 - [ ] Firmware/secure-boot feasibility study.
