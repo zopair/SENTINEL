@@ -70,10 +70,22 @@ def test_accepts_valid_event_and_ignores_blank_lines():
 
 
 def test_accepts_all_supported_record_types():
+    experiment = json.loads(experiment_record())
+    experiment["summary"] = {
+        policy: {
+            key: value for key, value in valid_metrics().items()
+            if key in {
+                "nodes_created", "nodes_visited", "steps",
+                "deepest_visited_level", "interaction_rate",
+                "step_budget_utilization",
+            }
+        }
+        for policy in ("baseline", "adaptive")
+    }
     result = parse_jsonl([
         event_record(),
         summary_record(),
-        experiment_record(),
+        json.dumps(experiment),
     ])
     assert [row.record_type for row in result] == [
         "event", "run_summary", "experiment_summary"
@@ -163,3 +175,11 @@ def test_accepts_signed_64_bit_event_seeds(seed):
 @given(st.text(max_size=2048))
 def test_accepts_bounded_unicode_detail(detail):
     assert parse_jsonl([event_record(detail=detail)])[0].payload["detail"] == detail
+
+
+def test_experiment_summary_matches_exported_comparison_schema():
+    from sentinel.experiments import compare_policies, to_jsonl
+
+    result = compare_policies([3, 9], max_nodes=16, max_steps=8)
+    records = parse_jsonl(to_jsonl(result).splitlines())
+    assert records[-1].record_type == "experiment_summary"

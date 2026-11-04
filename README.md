@@ -25,25 +25,19 @@ sentinel run --seed 7 --steps 20 --max-nodes 64
 sentinel compare --seeds 7 17 27 --steps 20 --jsonl
 ```
 
-Optional local synthetic-only container run (rootless Podman):
-```bash
-podman build -f lab/podman/Containerfile -t sentinel-core:local .
-chmod +x lab/podman/run-synthetic.sh
-./lab/podman/run-synthetic.sh
-```
-
 ## Current prototype
 - Deterministic procedural graph generation with FIFO baseline and adaptive priority policies.
 - Repeatable multi-seed experiment runner comparing both policies under identical budgets.
+- Allowlisted built-in agent runtime with a reproducible 100-point synthetic benchmark.
+- Rootless Podman Linux CI job that builds the synthetic image, checks effective settings, probes runtime containment properties, and runs the built-in agents in the container.
 - JSON and versioned JSONL event/summary output.
 - Read-only JSONL telemetry parser with strict record types, schema version checks, field allowlists, and input-size limits.
 - Metrics: visited/created nodes, deepest level, interaction rate, and step-budget utilization.
-- Unit tests for determinism, output schema, adapter validation, and resource limits.
 
 Elapsed runtime is recorded for diagnostics but excluded from policy averages because host scheduling introduces noise. The adaptive policy is an explicit heuristic for controlled experiments, not a validated model of real attacker behavior.
 
 ## Computing and isolation
-See [Open-Source Computing and Isolation Options](docs/COMPUTING_AND_ISOLATION_OPTIONS.md) for the shortlist and adoption criteria. Podman is currently optional packaging for the synthetic CLI only. No third-party agent runtime is enabled.
+See [Open-Source Computing and Isolation Options](docs/COMPUTING_AND_ISOLATION_OPTIONS.md) and [Agent Runtime and Benchmark](docs/AGENT_RUNTIME.md). The Linux CI sandbox currently runs only built-in deterministic strategies. Third-party agent code remains disabled.
 
 ## Safety
 Do not connect this prototype to production networks or expose it as a public honeypot. Future external-agent adapters require a disposable isolated lab, deny-by-default egress, resource quotas, and escape testing. The core does not launch agents or execute commands.
@@ -55,6 +49,7 @@ Do not connect this prototype to production networks or expose it as a public ho
 - [Research references](docs/RESEARCH_SOURCES.md)
 - [Computing and isolation options](docs/COMPUTING_AND_ISOLATION_OPTIONS.md)
 - [Open-source tooling inventory and security gates](docs/OPEN_SOURCE_TOOLING.md)
+- [Agent runtime and benchmark](docs/AGENT_RUNTIME.md)
 - [Security policy](SECURITY.md)
 - [Lab guide](lab/README.md)
 - [Lab containment design](lab/CONTAINMENT_DESIGN.md)

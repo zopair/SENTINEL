@@ -30,6 +30,11 @@ METRIC_FIELDS = {
     "deepest_visited_level", "interaction_rate",
     "step_budget_utilization", "elapsed_ms", "real_asset_exposure",
 }
+EXPERIMENT_METRIC_FIELDS = {
+    "nodes_created", "nodes_visited", "steps",
+    "deepest_visited_level", "interaction_rate",
+    "step_budget_utilization",
+}
 COUNT_METRICS = {
     "nodes_created", "nodes_visited", "events", "steps",
     "deepest_visited_level", "real_asset_exposure",
@@ -81,6 +86,22 @@ def _validate_metrics(metrics: Any, prefix: str) -> None:
         raise ValueError(prefix + "real_asset_exposure must remain zero")
 
 
+def _validate_experiment_metrics(metrics: Any, prefix: str) -> None:
+    if not isinstance(metrics, dict) or set(metrics) != EXPERIMENT_METRIC_FIELDS:
+        raise ValueError(prefix + "experiment summary metrics fields do not match schema")
+    for field, value in metrics.items():
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError(prefix + f"summary.{field} must be numeric")
+        if isinstance(value, int) and value > (2**63 - 1):
+            raise ValueError(prefix + f"summary.{field} exceeds the supported integer range")
+        if isinstance(value, float) and not math.isfinite(value):
+            raise ValueError(prefix + f"summary.{field} must be finite")
+        if value < 0:
+            raise ValueError(prefix + f"summary.{field} must be non-negative")
+    if metrics["interaction_rate"] > 1 or metrics["step_budget_utilization"] > 1:
+        raise ValueError(prefix + "summary ratios must be <= 1")
+
+
 def _validate(record: Any, line_number: int) -> TelemetryRecord:
     prefix = f"line {line_number}: "
     if not isinstance(record, dict):
@@ -125,7 +146,7 @@ def _validate(record: Any, line_number: int) -> TelemetryRecord:
         if not isinstance(summary, dict) or set(summary) != POLICIES:
             raise ValueError(prefix + "summary must contain baseline and adaptive")
         for metrics in summary.values():
-            _validate_metrics(metrics, prefix)
+            _validate_experiment_metrics(metrics, prefix)
     return TelemetryRecord(kind, record)
 
 

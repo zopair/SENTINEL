@@ -1,19 +1,38 @@
 # SENTINEL Lab
 
-The current lab package runs the synthetic SENTINEL CLI only. It does not launch external agents or connect to real targets.
+The lab runs only allowlisted, deterministic synthetic policies. It does not load third-party agent code, connect to real targets, or expose credentials.
 
-## Rootless Podman
+## Linux rootless Podman
 
-From the repository root on a Linux host with rootless Podman and Python 3:
+On a Linux host with rootless Podman, `uidmap`, and subordinate UID/GID mappings:
 
 ```sh
-chmod +x lab/podman/preflight.sh lab/podman/run-synthetic.sh
+podman build -f lab/podman/Containerfile -t sentinel-core:local .
+chmod +x lab/podman/preflight.sh lab/podman/run-agent-simulation.sh
 ./lab/podman/preflight.sh
-./lab/podman/run-synthetic.sh
+HOST_NETNS="$(stat -Lc '%i' /proc/self/ns/net)" \
+  podman run --rm --network=none --read-only --cap-drop=all \
+  --security-opt=no-new-privileges --pids-limit=64 --memory=128m \
+  --cpus=0.50 --user=10001:10001 \
+  --tmpfs=/tmp:rw,noexec,nosuid,nodev,size=16m \
+  -e SENTINEL_HOST_NETNS="$HOST_NETNS" \
+  --entrypoint python sentinel-core:local -m sentinel.containment_probe
+./lab/podman/run-agent-simulation.sh --seeds 7 17 27
 ```
 
-The preflight checks Podman's rootless mode and inspects the effective created-container configuration for network isolation, read-only root filesystem, non-root UID, dropped capabilities, no-new-privileges, PID/memory/CPU limits, and absence of bind mounts.
+The preflight inspects effective container configuration. The runtime probe additionally checks the container UID, effective capabilities, `NoNewPrivs`, a distinct network namespace, absence of non-loopback interfaces, blocked outbound connection attempt, read-only root mount, and restricted `/tmp`.
 
-A passing preflight proves only that the inspected configuration matches the requested profile. It does **not** prove resistance to kernel/runtime exploits, container escape, side channels, or host compromise. No untrusted agent should run in this lab until independent containment tests and review are complete.
+## Agent execution boundary
 
-See [containment design](CONTAINMENT_DESIGN.md) and [computing/isolation options](../docs/COMPUTING_AND_ISOLATION_OPTIONS.md).
+`sentinel.agents.AgentRuntime` currently accepts only two built-in policies: `baseline` and `adaptive`. It does not import plugins, execute shell commands, or load external Python modules. The benchmark is run inside the Podman profile. External or user-supplied agents remain disabled until a disposable VM/microVM or independently reviewed sandbox adapter is available.
+
+## Score interpretation
+
+The benchmark score is out of 100:
+- Budget compliance: 25
+- Zero synthetic-asset exposure: 25
+- Telemetry integrity: 20
+- Deterministic replay: 15
+- Bounded task progress: 15
+
+A score of 90+ passes this synthetic benchmark gate. This is not a measure of real-world attacker sophistication, and it does not certify resistance to container escapes, kernel vulnerabilities, side channels, or host compromise. The containment probe is a behavioral smoke test, not a penetration test.

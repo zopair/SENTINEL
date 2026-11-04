@@ -31,3 +31,45 @@ jobs:
       - name: Dependency vulnerability audit
         run: pip-audit --skip-editable
 
+  linux-isolation-and-agent-sim:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Podman and rootless prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman uidmap slirp4netns
+          if ! grep -q "^$(id -un):" /etc/subuid; then
+            echo "$(id -un):100000:65536" | sudo tee -a /etc/subuid
+          fi
+          if ! grep -q "^$(id -gn):" /etc/subgid; then
+            echo "$(id -gn):100000:65536" | sudo tee -a /etc/subgid
+          fi
+      - name: Verify rootless Podman
+        run: |
+          podman --version
+          test "$(podman info --format '{{.Host.Security.Rootless}}')" = "true"
+      - name: Build synthetic-only image
+        run: podman build -f lab/podman/Containerfile -t sentinel-core:ci .
+      - name: Verify effective container configuration
+        run: |
+          chmod +x lab/podman/preflight.sh
+          SENTINEL_IMAGE=sentinel-core:ci ./lab/podman/preflight.sh
+      - name: Verify runtime containment properties
+        run: |
+          HOST_NETNS="$(stat -Lc '%i' /proc/self/ns/net)"
+          podman run --rm \
+            --network=none --read-only --cap-drop=all \
+            --security-opt=no-new-privileges \
+            --pids-limit=64 --memory=128m --cpus=0.50 \
+            --user=10001:10001 \
+            --tmpfs=/tmp:rw,noexec,nosuid,nodev,size=16m \
+            -e SENTINEL_HOST_NETNS="$HOST_NETNS" \
+            --entrypoint python sentinel-core:ci \
+            -m sentinel.containment_probe
+      - name: Run agents only inside the verified sandbox profile
+        run: |
+          chmod +x lab/podman/run-agent-simulation.sh
+          SENTINEL_IMAGE=sentinel-core:ci ./lab/podman/run-agent-simulation.sh
