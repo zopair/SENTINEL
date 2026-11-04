@@ -104,6 +104,7 @@ class DeceptionEngine:
             raise ValueError(f"policy must be one of: {', '.join(POLICIES)}")
 
         started = time.monotonic()
+        # Deterministic PRNG is intentional for reproducible experiments; never use for secrets. # nosec B311
         rng = random.Random(self.config.seed ^ 0x5E17)
         root = next(iter(self.nodes.values()))
         frontier = [root]
