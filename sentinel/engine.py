@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 import hashlib
-import random
 import time
 from typing import Any
 
@@ -62,7 +61,6 @@ class DeceptionEngine:
     def __init__(self, config: EngineConfig | None = None) -> None:
         self.config = config or EngineConfig()
         self.config.validate()
-        self._rng = random.Random(self.config.seed)
         self.nodes: dict[str, Node] = {}
         self.events: list[Event] = []
         self._create_node(None, 0)
@@ -72,7 +70,7 @@ class DeceptionEngine:
         digest = hashlib.sha256(
             f"{self.config.seed}:{ordinal}:{parent_id}:{depth}".encode()
         ).hexdigest()[:12]
-        kind = self._rng.choice(self.KINDS)
+        kind = self.KINDS[int(digest, 16) % len(self.KINDS)]
         node = Node(
             node_id=f"decoy-{digest}",
             kind=kind,
