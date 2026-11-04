@@ -4,9 +4,13 @@ on:
   push:
     branches: [main]
     paths:
-      - "README.md"\n      - "CITATION.cff"\n      - "llms.txt"\n      - "index.html"
+      - "README.md"
+      - "CITATION.cff"
+      - "llms.txt"
+      - "index.html"
       - "lab.html"
-      - "docs/**"\n      - "media/**"
+      - "docs/**"
+      - "media/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
