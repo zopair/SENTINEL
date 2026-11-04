@@ -45,8 +45,19 @@ class Event:
 
 
 class DeceptionEngine:
-    """Generate and explore synthetic decoys within explicit resource budgets."""
+    """Generate and explore synthetic decoys within explicit resource budgets.
+
+    The adaptive policy is a transparent deterministic heuristic used for
+    controlled experiments, not a model of real attacker behavior.
+    """
     KINDS = ("service", "document", "repository", "dashboard", "credential_hint")
+    ADAPTIVE_PRIORITY = {
+        "credential_hint": 5,
+        "repository": 4,
+        "dashboard": 3,
+        "service": 2,
+        "document": 1,
+    }
 
     def __init__(self, config: EngineConfig | None = None) -> None:
         self.config = config or EngineConfig()
@@ -73,16 +84,31 @@ class DeceptionEngine:
         return node
 
     def _record(self, event_type: str, node: Node, detail: str) -> None:
-        self.events.append(Event(len(self.events) + 1, event_type, node.node_id, node.depth, detail))
+        self.events.append(Event(
+            len(self.events) + 1, event_type, node.node_id, node.depth, detail
+        ))
 
-    def run(self) -> dict[str, Any]:
+    def run(self, policy: str = "baseline") -> dict[str, Any]:
+        """Explore using FIFO baseline or deterministic adaptive prioritization."""
+        if policy not in {"baseline", "adaptive"}:
+            raise ValueError("policy must be 'baseline' or 'adaptive'")
+
         started = time.monotonic()
         frontier = [next(iter(self.nodes.values()))]
         visited: set[str] = set()
         steps = 0
 
         while frontier and steps < self.config.max_steps:
-            current = frontier.pop(0)
+            if policy == "baseline":
+                current = frontier.pop(0)
+            else:
+                # Stable tie-breaking preserves insertion order.
+                best_index = max(
+                    range(len(frontier)),
+                    key=lambda index: self.ADAPTIVE_PRIORITY[frontier[index].kind],
+                )
+                current = frontier.pop(best_index)
+
             if current.node_id in visited:
                 continue
             visited.add(current.node_id)
@@ -93,7 +119,10 @@ class DeceptionEngine:
                 self._record("depth_budget_reached", current, "Maximum depth reached")
                 continue
 
-            count = min(self.config.branching_factor, self.config.max_nodes - len(self.nodes))
+            count = min(
+                self.config.branching_factor,
+                self.config.max_nodes - len(self.nodes),
+            )
             for _ in range(max(0, count)):
                 child = self._create_node(current.node_id, current.depth + 1)
                 frontier.append(child)
@@ -104,13 +133,20 @@ class DeceptionEngine:
         if frontier and steps >= self.config.max_steps:
             self._record("step_budget_reached", frontier[0], "Maximum step count reached")
 
+        deepest = max((self.nodes[node_id].depth for node_id in visited), default=0)
         return {
+            "policy": policy,
             "config": asdict(self.config),
             "metrics": {
                 "nodes_created": len(self.nodes),
                 "nodes_visited": len(visited),
                 "events": len(self.events),
                 "steps": steps,
+                "deepest_visited_level": deepest,
+                "interaction_rate": round(len(visited) / max(1, len(self.nodes)), 4),
+                "step_budget_utilization": round(
+                    steps / max(1, self.config.max_steps), 4
+                ),
                 "elapsed_ms": round((time.monotonic() - started) * 1000, 3),
                 "real_asset_exposure": 0,
             },
