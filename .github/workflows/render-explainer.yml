@@ -1,0 +1,52 @@
+name: Render SENTINEL explainer
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sentinel-explainer-render
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: media/requirements.txt
+
+      - name: Install system rendering dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev pkg-config
+
+      - name: Install Manim
+        run: python -m pip install -r media/requirements.txt
+
+      - name: Render 1080p explainer
+        run: |
+          manim -qh --fps 30 --resolution 1920,1080             media/sentinel_explainer.py SentinelExplainer
+
+      - name: Collect MP4
+        run: |
+          mkdir -p rendered
+          find media -type f -name 'SentinelExplainer.mp4' -exec cp {} rendered/SENTINEL-explainer-1080p.mp4 \;
+          test -s rendered/SENTINEL-explainer-1080p.mp4
+
+      - name: Upload rendered video
+        uses: actions/upload-artifact@v4
+        with:
+          name: SENTINEL-explainer-1080p
+          path: rendered/SENTINEL-explainer-1080p.mp4
+          if-no-files-found: error
+          retention-days: 30
