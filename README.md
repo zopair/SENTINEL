@@ -29,7 +29,8 @@ sentinel compare --seeds 7 17 27 --steps 20 --jsonl
 - Deterministic procedural graph generation with FIFO baseline and adaptive priority policies.
 - Repeatable multi-seed experiment runner comparing both policies under identical budgets.
 - Allowlisted built-in agent runtime with a reproducible 100-point synthetic benchmark.
-- Rootless Podman Linux CI job that builds the synthetic image, checks effective settings, probes runtime containment properties, and runs the built-in agents in the container.\n- Initial external-agent containment gateway with immutable image digests, rootless-only execution, deny-by-default isolation, bounded resources, and capped output; third-party agents are not yet integrated.
+- Rootless Podman Linux CI job that builds the synthetic image, checks effective settings, probes runtime containment properties, and runs the built-in agents in the container.
+- Initial external-agent containment gateway with immutable image digests, rootless-only execution, deny-by-default isolation, bounded resources, and capped output; third-party agents are not yet integrated.
 - JSON and versioned JSONL event/summary output.
 - Read-only JSONL telemetry parser with strict record types, schema version checks, field allowlists, and input-size limits.
 - Metrics: visited/created nodes, deepest level, interaction rate, and step-budget utilization.
@@ -52,6 +53,7 @@ Do not connect this prototype to production networks or expose it as a public ho
 - [Agent runtime and benchmark](docs/AGENT_RUNTIME.md)
 - [Security policy](SECURITY.md)
 - [Lab guide](lab/README.md)
-- [Lab containment design](lab/CONTAINMENT_DESIGN.md)\n- [Containment Gateway](docs/CONTAINMENT_GATEWAY.md)
+- [Lab containment design](lab/CONTAINMENT_DESIGN.md)
+- [Containment Gateway](docs/CONTAINMENT_GATEWAY.md)
 
 MIT License. See [LICENSE](LICENSE).
