@@ -44,3 +44,8 @@ def test_jsonl_v2_contains_validated_paired_test_metadata():
         "random_walk", "greedy", "bfs", "dfs", "adaptive"
     }
     assert summary["paired_tests_vs_static_decoy"]["adaptive"]["steps"]["p_value_holm"] <= 1
+
+
+def test_engine_rejects_seed_outside_signed_64_bit_range():
+    with pytest.raises(ValueError):
+        EngineConfig(seed=2**63).validate()
