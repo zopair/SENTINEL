@@ -16,12 +16,13 @@ class BehaviorAssessment:
 
 
 class BehaviorAnalyzer:
-    ACTIONS = ("enumerate", "verify", "follow", "inspect", "wait")
+    ACTIONS = ("enumerate", "verify", "follow", "inspect", "collect", "wait")
     PROFILES = {
         "enumerate": ("broad_discovery", "synthetic_inventory"),
         "verify": ("validation_oriented", "consistency_check"),
         "follow": ("path_seeking", "decoy_route"),
         "inspect": ("detail_inspection", "symbol_sequence"),
+        "collect": ("asset_seeking", "archive_bundle"),
         "wait": ("timing_observation", "temporal_pattern"),
     }
 
