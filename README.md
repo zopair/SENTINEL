@@ -20,7 +20,7 @@ This is a narrow, testable question. SENTINEL does not claim that an attacker, i
 - JSON/JSONL schema 2.0 with paired per-seed differences, Monte Carlo sign-flip tests, and Holm-adjusted p-values.
 - Hard configuration ceilings: 4,096 nodes, depth 64, 4,096 steps, and branching factor 1–8.
 - Rootless Podman CI containment fixtures; these are tests, not proof of escape-proof isolation.
-- Browser Visual Lab and local JSONL reader on GitHub Pages.
+- Bilingual Browser Research Lab with a loopback-only standard-library server for real Python engine runs and local JSONL analytics.
 
 ## Policy comparison
 | Policy | Selection rule | Purpose |
