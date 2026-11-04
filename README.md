@@ -7,6 +7,10 @@ SENTINEL is an open-source cybersecurity research prototype exploring adaptive c
 
 > **Status:** Research prototype · version 0.1.0 · not a production security boundary, public honeypot, authentication system, or certified security control.
 
+![SENTINEL cinematic research visual](media/sentinel-visual.svg)
+
+**[Watch the 35-second cinematic explainer](media/SENTINEL-explainer.mp4)** · [Open the bilingual research lab](https://zopair.github.io/SENTINEL/lab.html)
+
 ## Research question
 Can a deterministic adaptive exploration heuristic change how a scripted explorer spends a fixed interaction budget inside a synthetic decoy graph, compared with non-adaptive and standard search baselines?
 
