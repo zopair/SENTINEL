@@ -49,3 +49,14 @@ def test_jsonl_v2_contains_validated_paired_test_metadata():
 def test_engine_rejects_seed_outside_signed_64_bit_range():
     with pytest.raises(ValueError):
         EngineConfig(seed=2**63).validate()
+
+@pytest.mark.parametrize("field", ["max_nodes", "max_depth", "max_steps", "branching_factor", "seed"])
+def test_engine_rejects_boolean_numeric_configuration(field):
+    with pytest.raises(ValueError):
+        EngineConfig(**{field: True}).validate()
+
+
+@pytest.mark.parametrize("field", ["max_nodes", "max_depth", "max_steps", "branching_factor"])
+def test_engine_rejects_fractional_configuration(field):
+    with pytest.raises(ValueError):
+        EngineConfig(**{field: 2.5}).validate()
