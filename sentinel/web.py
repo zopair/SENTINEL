@@ -1,7 +1,7 @@
 """Loopback-only, dependency-free web interface for the real SENTINEL engine."""
 from __future__ import annotations
 
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from pathlib import Path
 from typing import Any
@@ -58,7 +58,7 @@ def serve(port: int = 8765) -> None:
     if not page.is_file():
         raise RuntimeError("lab.html was not found; run SENTINEL from a source checkout")
 
-    allowed_hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
+    allowed_hosts = {f"127.0.0.1:{port}"}
     allowed_origins = {f"http://{host}" for host in allowed_hosts}
 
     class Handler(BaseHTTPRequestHandler):
@@ -85,7 +85,7 @@ def serve(port: int = 8765) -> None:
         def _is_loopback_request(self) -> bool:
             host = self.headers.get("Host", "")
             remote = self.client_address[0]
-            return host in allowed_hosts and remote in {"127.0.0.1", "::1"}
+            return host in allowed_hosts and remote == "127.0.0.1"
 
         def do_GET(self) -> None:
             if not self._is_loopback_request():
@@ -132,7 +132,7 @@ def serve(port: int = 8765) -> None:
             # Keep local experiment output clean; HTTP errors are returned to the UI.
             return
 
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server = HTTPServer(("127.0.0.1", port), Handler)
     print(f"SENTINEL local research lab: http://127.0.0.1:{port}/")
     print("Loopback only. Stop with Ctrl+C. No remote agents or network targets are enabled.")
     try:
