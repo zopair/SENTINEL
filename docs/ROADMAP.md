@@ -1,57 +1,47 @@
 # Roadmap
 
 ## v0.1 — Safe core
-- [x] Project overview and safety boundary.
-- [x] Deterministic synthetic graph generation.
-- [x] Bounded exploration and structured JSON output.
-- [x] Tests for determinism and resource limits.
-- [x] GitHub Actions test workflow verified.
+- [x] Project overview, synthetic graph, bounded exploration, and tests.
+- [x] GitHub Actions test workflow.
 
 ## v0.2 — Experiment science
-- [x] FIFO baseline and adaptive-priority exploration policies.
-- [x] Multi-seed comparison runner with matched budgets.
-- [x] Versioned JSONL event and summary export.
-- [x] Exploration depth, interaction, and budget metrics.
-- [ ] Add confidence intervals after collecting larger experiment batches.
-- [ ] Validate the adaptive heuristic against documented agent-behavior datasets.
+- [x] FIFO baseline and deterministic adaptive priority policy.
+- [x] Matched-seed comparison and versioned JSONL telemetry.
+- [ ] Confidence intervals and documented behavioral datasets.
 
 ## v0.3 — Isolated synthetic lab
-- [x] Rootless Podman profile and bounded synthetic workload.
-- [x] Strict read-only JSONL telemetry adapter and property-based tests.
-- [x] Bandit and pip-audit CI gates.
-- [x] Allowlisted built-in agent runtime and synthetic benchmark.
-- [x] Linux CI preflight and runtime containment smoke checks.
-- [ ] Verify hard quotas under sustained load on a dedicated Linux host.
+- [x] Rootless Podman profile, telemetry validation, Bandit, and pip-audit.
+- [x] Built-in synthetic agent runtime and Linux containment checks.
+- [ ] Sustained hard-quota validation on a dedicated Linux host.
 - [ ] Independent escape-oriented review.
 
 ## v0.4 — External-agent Containment Gateway
-- [x] Immutable run specifications and rootless-only execution.
-- [x] Networkless, read-only, non-root, no-capability, no-new-privileges profile.
-- [x] Bounded CPU, memory, PID, wall-clock, output, and tmpfs policy.
-- [x] Synthetic fixtures for filesystem/network denial, output limits, timeout, PID pressure, and temporary-storage limits.
-- [x] Best-effort disposable-container cleanup on timeout, output overflow, interruption, or host-side exception.
-- [ ] Independent review of the effective runtime profile.
-- [ ] External-agent adapter only after the containment gate passes independent review.
+- [x] Immutable image references and rootless-only execution.
+- [x] Networkless, read-only, non-root, no-capability profile.
+- [x] Bounded CPU, memory, PID, wall-clock, output, and tmpfs.
+- [x] Synthetic filesystem/network, PID, tmpfs, output, timeout, and cleanup fixtures.
+- [ ] Independent runtime-profile review.
+- [ ] External agents remain disabled until independent review passes.
 
 ## v0.5 — Adaptive Deception Environment
-- [x] Action-conditioned synthetic labyrinth with challenge reformulation.
-- [x] Deterministic replay and explicit node/depth/step limits.
-- [x] Synthetic interaction telemetry and safety invariants.
-- [ ] Add adversary-strategy families and deception-evasion evaluation.
-- [ ] Compare static decoys against adaptive labyrinth across larger matched-seed batches.
-- [ ] Add confidence intervals and report uncertainty.
+- [x] Action-conditioned synthetic labyrinth with bounded challenge reformulation.
+- [x] Deterministic behavior classification and challenge recommendations.
+- [x] Replayability and node/depth/step limits.
+- [ ] Add diverse synthetic agent strategies and deception-evasion evaluation.
+- [ ] Compare static and adaptive decoys across larger matched-seed batches.
+- [ ] Confidence intervals and uncertainty reporting.
 
-## v0.6 — Behavior intelligence (optional)
-- [ ] Establish a labeled synthetic behavior dataset and transparent baselines.
-- [ ] Evaluate lightweight classifiers before neural models.
-- [ ] Add Keras 3 as an optional extra only if it beats deterministic baselines on held-out seeds.
-- [ ] Neural inference may recommend challenge difficulty; deterministic policy and crypto verification retain final authority.
+## v0.6 — Optional behavior intelligence
+- [ ] Build labeled synthetic behavior datasets.
+- [ ] Compare deterministic rules with lightweight classifiers on held-out seeds.
+- [ ] Add Keras 3 only as an optional extra if measured benefit justifies its cost.
+- [ ] Neural output may recommend challenge difficulty; deterministic controls retain final authority.
 
 ## v0.7 — Trusted access research
 - [ ] Nonce/signature protocol and replay/relay analysis.
-- [ ] TPM2-backed proof of concept on supported hardware.
-- [ ] GGWave transport experiment compared with QR/BLE/NFC.
-- [ ] Firmware/secure-boot feasibility study.
+- [ ] TPM2 proof of concept on supported hardware.
+- [ ] GGWave transport compared with QR/BLE/NFC.
+- [ ] Firmware and secure-boot feasibility study.
 
 ## Release gates
-Passing tests, dependency and secret scans, documented threat model, reproducible configuration, independent containment review, and explicit feature-status claims. Any real-asset exposure or lab escape blocks release.
+Passing tests, dependency and secret scans, documented threat model, reproducible configuration, independent containment review, and explicit status claims. Any real-asset exposure or lab escape blocks release.
