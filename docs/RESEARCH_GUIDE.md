@@ -46,7 +46,7 @@ The operator declares:
 - `max_steps`: maximum exploration steps, hard-capped at 4,096.
 - `branching_factor`: children per expanded node, restricted to 1–8.
 
-The engine validates configuration before allocating the graph. These application-level ceilings are not a substitute for operating-system CPU, memory, process, or wall-clock quotas.
+The engine validates configuration before allocating the graph. Seeds must be unique signed 64-bit integers; one experiment accepts at most 1,000 seeds and rejects configurations whose estimated JSONL record count would exceed 100,000. These application-level ceilings are not a substitute for operating-system CPU, memory, process, or wall-clock quotas.
 
 ### 3.2 Synthetic graph generator
 The graph is generated in memory before a policy begins. Node identifiers and decoy kinds are derived deterministically from the seed, node ordinal, parent identifier, and depth. The generator creates fictional node types such as:
