@@ -5,7 +5,7 @@
 ## Assets and security objectives
 - Keep real credentials, customer data, production identities, and production systems outside the experiment.
 - Preserve experiment integrity: fixed seeds, explicit budgets, versioned policy definitions, and reproducible output.
-- Bound local simulator resource use through node, depth, step, and branching limits.
+- Bound local simulator resource use through hard ceilings: 4,096 nodes, depth 64, 4,096 steps, branching factor 1–8, and signed 64-bit seeds.
 - Avoid implying that synthetic interaction proves real-world attacker deception.
 
 ## Adversaries and assumptions
@@ -41,7 +41,7 @@ The current evaluation uses deterministic scripted strategies and algorithmic ex
 The legacy name baseline remains a backwards-compatible alias for BFS. The graph is pre-generated deterministically before policy execution. Every policy receives the identical node set and topology for a given seed/configuration. Static Decoy uses fixed identifier ordering without behavior-based reprioritization; BFS uses FIFO order.
 
 ## Evaluation and interpretation
-Experiments use identical seeds and resource budgets across policies. Report per-policy distributions and paired per-seed differences against Static Decoy. The current implementation reports descriptive normal-approximation 95% confidence intervals; they are not a substitute for a pre-registered statistical analysis and may be unreliable for small samples or non-normal outcomes.
+Experiments use identical seeds and resource budgets across policies. Report per-policy distributions and paired per-seed differences against Static Decoy. The current implementation reports descriptive normal-approximation 95% confidence intervals, paired sign-flip Monte Carlo p-values, and Holm-adjusted values across the declared policy/metric comparisons. These are exploratory; the confidence intervals may be unreliable for small samples or non-normal outcomes, and permutation tests rely on exchangeability assumptions. See the Research Guide for full definitions and interpretation.
 
 Use at least 30 seeds for an initial exploratory run, then increase the sample size based on variance and the intended claim. Report negative and inconclusive results. Keep held-out strategies for later validation because current policies and scripted profiles may share design assumptions.
 
