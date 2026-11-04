@@ -21,7 +21,7 @@
 - [x] Property-based tests for telemetry input boundaries.
 - [x] Development CI gates for Bandit and pip-audit.
 - [x] Allowlisted built-in agent runtime and synthetic 100-point benchmark.
-- [x] Linux CI job for Podman configuration preflight and runtime containment smoke checks (execution result tracked in Actions).
+- [x] Linux CI job for Podman configuration preflight and runtime containment smoke checks (verified in [Actions run 41762079705](https://github.com/zopair/SENTINEL/actions/runs/41762079705)).
 - [ ] Gitleaks CI integration with a reviewed, pinned upstream action/binary.
 - [ ] Disposable VM/microVM adapter for third-party authorized agents with deny-by-default egress.
 - [ ] Adversarial escape testing and independent containment review.

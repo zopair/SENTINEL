@@ -16,7 +16,7 @@ The runtime and benchmark are launched inside the rootless Podman image with:
 - `/tmp` as 16 MiB `noexec,nosuid,nodev` tmpfs
 - no host bind mounts
 
-The Linux CI job inspects the effective container configuration and runs a behavioral smoke probe. This validates the configured environment on that runner; it is not a container-escape test or independent security assessment.
+The Linux CI job inspects the effective container configuration and runs a behavioral smoke probe. The successful run for the current implementation is [GitHub Actions run 41762079705](https://github.com/zopair/SENTINEL/actions/runs/41762079705). This validates the configured environment on that runner; it is not a container-escape test or independent security assessment.
 
 ## Agent interface
 

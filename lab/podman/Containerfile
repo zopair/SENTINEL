@@ -1,4 +1,4 @@
-# Minimal, synthetic-only runtime. No shell, network client, secrets or third-party agent code.
+# Minimal synthetic-only runtime. No third-party agent code or secrets; egress is denied by the runtime profile.
 FROM python:3.12-alpine
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
