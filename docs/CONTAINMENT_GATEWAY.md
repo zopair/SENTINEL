@@ -1,28 +1,24 @@
 # SENTINEL Containment Gateway — v0.4 foundation
 
 ## Purpose
-
-The gateway is the only approved path for a future external-agent execution. It is deliberately separate from the deception engine and built-in synthetic policies.
+The gateway is the only approved path proposed for future external-agent execution. It remains separate from the deception engine and built-in synthetic policies.
 
 ## Implemented foundation
-
-- Immutable run specification with a full SHA-256 registry digest or local content-addressed image ID; mutable tags such as `latest` are rejected.
-- Bounded policy values for memory, CPU, process count, wall-clock time, captured output, and temporary storage.
-- Rootless Podman is verified before each run. Failure to verify rootless mode fails closed.
-- Fixed runtime profile: no network, read-only root filesystem, all Linux capabilities dropped, no-new-privileges, non-root UID/GID, bounded PID/memory/CPU, and a small noexec/nosuid/nodev tmpfs.
-- No host bind mounts, environment forwarding, port publishing, stdin forwarding, or privileged mode.
-- Argument-vector execution; the host does not invoke a shell.
-- Output is captured with a strict byte ceiling. Timeout or output-limit breach triggers container kill/removal and runner-process cleanup.
-- A unique generated container name is used for lifecycle cleanup.
+- Immutable run specification pinned to a full SHA-256 digest or local content-addressed image ID.
+- Bounded memory, CPU, process count, wall-clock time, captured output, and temporary storage.
+- Rootless Podman verification; failure to verify rootless mode fails closed.
+- Fixed runtime profile: no network, read-only root filesystem, all Linux capabilities dropped, no-new-privileges, non-root UID/GID, no host mounts, no ports, and no environment forwarding.
+- Argument-vector execution with no host shell invocation.
+- Strict output byte ceiling and disposable-container cleanup on timeout/output overflow.
+- Cleanup is attempted from the host-side finally path if execution is interrupted or raises unexpectedly.
+- Linux CI fixtures exercise denied filesystem writes and network access, output ceiling, tmpfs quota, PID pressure, timeout, and child-process/container cleanup.
 
 ## Deliberate limitations
+This is a first gateway foundation, not complete containment or a production-grade sandbox. It does not accept arbitrary source trees, build untrusted images, mount host workspaces, grant network access, or integrate third-party agent frameworks. Images must be built separately in a controlled process and supplied by immutable digest.
 
-This is a first gateway foundation, not a claim of complete containment or a production-grade sandbox. It does not yet accept arbitrary source trees, build untrusted images, mount host workspaces, grant network access, or integrate third-party agent frameworks. Images must be built separately in a controlled process and supplied by immutable digest. Do not build an untrusted agent image on a developer workstation and assume rootless image building is a sufficient security boundary.
-
-The runner has not yet undergone independent escape testing. The next stage adds bounded adversarial fixtures and lifecycle tests inside disposable CI environments. A successful run only demonstrates the specific checks that were executed.
+CI fixtures validate only the tested behavior and runner lifecycle. They do not constitute kernel escape testing, independent review, or hard-quota validation under sustained adversarial load on a dedicated host. External agents remain disabled until independent escape-oriented review and the remaining release gates pass.
 
 ## Example
-
 ```python
 from sentinel.containment import AgentRunSpec, ContainmentPolicy, PodmanRunner
 

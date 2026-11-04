@@ -110,7 +110,6 @@ class PodmanRunner:
                     break
                 events = selector.select(min(remaining, 0.2))
                 if not events and process.poll() is not None:
-                    # Drain the pipe until EOF before returning.
                     continue
                 for key, _ in events:
                     chunk = os.read(key.fd, 65_536)
@@ -135,6 +134,9 @@ class PodmanRunner:
             status = "timed_out"
             self._cleanup(executable, name, process)
         finally:
+            # Also clean up on KeyboardInterrupt or an unexpected host-side exception.
+            if process.poll() is None:
+                self._cleanup(executable, name, process)
             selector.close()
             if process.stdout is not None:
                 process.stdout.close()

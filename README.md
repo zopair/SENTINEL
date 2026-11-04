@@ -9,8 +9,9 @@ SENTINEL is an open-source research prototype for bounded, measurable cyber dece
 
 ## Principles
 - Synthetic-only content: no real credentials, customer data, or production endpoints.
-- Bounded execution: explicit node, depth, step, and time budgets.
-- No outbound network or command execution in the core.
+- The real system is never part of the maze; only synthetic decoy space evolves.
+- Bounded execution: explicit node, depth, step, time, process, memory, and output budgets.
+- No outbound network or command execution in the deception core.
 - Structured telemetry and reproducible experiments.
 - Deception supplements—not replaces—access control, isolation, monitoring, and secure boot.
 
@@ -22,27 +23,26 @@ source .venv/bin/activate
 python -m pip install -e ".[dev]"
 pytest
 sentinel run --seed 7 --steps 20 --max-nodes 64
+sentinel labyrinth --seed 7 --actions inspect follow verify enumerate inspect
 sentinel compare --seeds 7 17 27 --steps 20 --jsonl
 ```
 
 ## Current prototype
 - Deterministic procedural graph generation with FIFO baseline and adaptive priority policies.
-- Repeatable multi-seed experiment runner comparing both policies under identical budgets.
-- Allowlisted built-in agent runtime with a reproducible 100-point synthetic benchmark.
-- Rootless Podman Linux CI job that builds the synthetic image, checks effective settings, probes runtime containment properties, and runs the built-in agents in the container.
+- Adaptive synthetic labyrinth sessions that reformulate decoy challenges from observed test-agent actions under fixed budgets.
+- Repeatable multi-seed experiment runner comparing policies under identical budgets.
+- Allowlisted built-in agent runtime with a reproducible synthetic benchmark.
+- Rootless Podman Linux CI job that checks effective settings, probes runtime containment, and exercises bounded adversarial fixtures.
 - Initial external-agent containment gateway with immutable image digests, rootless-only execution, deny-by-default isolation, bounded resources, and capped output; third-party agents are not yet integrated.
-- Linux CI integration exercises a synthetic fixture through the gateway, including filesystem/network denial, output caps, and timeout cleanup.
-- JSON and versioned JSONL event/summary output.
-- Read-only JSONL telemetry parser with strict record types, schema version checks, field allowlists, and input-size limits.
-- Metrics: visited/created nodes, deepest level, interaction rate, and step-budget utilization.
+- JSON and versioned JSONL telemetry output.
 
-Elapsed runtime is recorded for diagnostics but excluded from policy averages because host scheduling introduces noise. The adaptive policy is an explicit heuristic for controlled experiments, not a validated model of real attacker behavior.
+The adaptive labyrinth is deterministic experimental logic, not a trained AI model or a validated model of real attackers. Elapsed runtime is diagnostic only. A successful CI run demonstrates only the specific checks executed; it is not an escape test or security certification.
 
 ## Computing and isolation
-See [Open-Source Computing and Isolation Options](docs/COMPUTING_AND_ISOLATION_OPTIONS.md) and [Agent Runtime and Benchmark](docs/AGENT_RUNTIME.md). The Linux CI sandbox currently runs only built-in deterministic strategies. Third-party agent code remains disabled.
+See [Open-Source Computing and Isolation Options](docs/COMPUTING_AND_ISOLATION_OPTIONS.md), [Agent Runtime and Benchmark](docs/AGENT_RUNTIME.md), and [Containment Gateway](docs/CONTAINMENT_GATEWAY.md).
 
 ## Safety
-Do not connect this prototype to production networks or expose it as a public honeypot. Future external-agent adapters require a disposable isolated lab, deny-by-default egress, resource quotas, and escape testing. The core does not launch agents or execute commands.
+Do not connect this prototype to production networks or expose it as a public honeypot. Future external-agent adapters require a disposable isolated lab, deny-by-default egress, resource quotas, and independent escape-oriented review. Never pass production credentials or real customer data into an agent container.
 
 ## Documentation
 - [Architecture](docs/ARCHITECTURE.md)

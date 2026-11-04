@@ -50,6 +50,47 @@ def main() -> None:
         sys.stdout.write("x" * 20_000)
     elif mode == "sleep":
         time.sleep(10)
+    elif mode == "tmpfs":
+        path = "/tmp/sentinel-quota-probe"
+        written = 0
+        try:
+            with open(path, "wb") as handle:
+                while written <= 2 * 1024 * 1024:
+                    handle.write(b"x" * 65_536)
+                    handle.flush()
+                    written += 65_536
+        except OSError:
+            pass
+        finally:
+            try:
+                os.unlink(path)
+            except OSError:
+                pass
+        print(json.dumps({"bytes_written_before_limit": written}))
+    elif mode == "process_limit":
+        children = []
+        for _ in range(96):
+            try:
+                pid = os.fork()
+            except OSError:
+                break
+            if pid == 0:
+                time.sleep(0.4)
+                os._exit(0)
+            children.append(pid)
+        for pid in children:
+            try:
+                os.waitpid(pid, 0)
+            except ChildProcessError:
+                pass
+        print(json.dumps({"children_created": len(children)}))
+    elif mode == "child_sleep":
+        pid = os.fork()
+        if pid == 0:
+            time.sleep(20)
+            os._exit(0)
+        print(json.dumps({"child_pid": pid}), flush=True)
+        time.sleep(20)
     else:
         raise SystemExit(2)
 

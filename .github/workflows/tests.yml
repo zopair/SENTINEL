@@ -55,7 +55,7 @@ jobs:
         run: podman build -f lab/podman/Containerfile -t sentinel-core:ci .
       - name: Build pinned agent fixture image
         run: podman build -f lab/podman/AgentFixture.Containerfile -t sentinel-agent-fixture:ci .
-      - name: Exercise the containment gateway against synthetic agent fixtures
+      - name: Exercise containment gateway against bounded adversarial fixtures
         env:
           PYTHONPATH: .
         run: |
@@ -64,31 +64,47 @@ jobs:
           SENTINEL_FIXTURE_IMAGE="$AGENT_IMAGE" python3 - <<'PY'
           import json
           import os
+          import subprocess
           from sentinel.containment import AgentRunSpec, ContainmentPolicy, PodmanRunner
 
           image = os.environ["SENTINEL_FIXTURE_IMAGE"]
           runner = PodmanRunner()
+          def run(mode, policy=None):
+              return runner.run(AgentRunSpec(
+                  image=image, command=[mode], policy=policy or ContainmentPolicy()
+              ))
 
-          probe = runner.run(AgentRunSpec(image=image, command=["probe"]))
+          probe = run("probe")
           assert probe.status == "completed" and probe.exit_code == 0, probe
           facts = json.loads(probe.output)
           assert facts["non_root"] and facts["capabilities_zero"]
           assert facts["no_new_privileges"] and facts["filesystem_write_blocked"]
           assert facts["network_blocked"], facts
 
-          output = runner.run(AgentRunSpec(
-              image=image, command=["output"],
-              policy=ContainmentPolicy(output_limit_bytes=1024),
-          ))
+          output = run("output", ContainmentPolicy(output_limit_bytes=1024))
           assert output.status == "output_limit_exceeded"
           assert output.output_truncated and len(output.output.encode()) == 1024
 
-          timed = runner.run(AgentRunSpec(
-              image=image, command=["sleep"],
-              policy=ContainmentPolicy(timeout_seconds=1),
-          ))
+          timed = run("sleep", ContainmentPolicy(timeout_seconds=1))
           assert timed.status == "timed_out"
-          print("PASS: gateway probe, filesystem/network denial, output cap, and timeout cleanup")
+
+          quota = run("tmpfs", ContainmentPolicy(tmpfs_mb=1))
+          assert quota.status == "completed" and quota.exit_code == 0, quota
+          quota_bytes = json.loads(quota.output)["bytes_written_before_limit"]
+          assert quota_bytes <= 2 * 1024 * 1024, quota_bytes
+
+          pids = run("process_limit", ContainmentPolicy(pids_limit=16))
+          assert pids.status == "completed" and pids.exit_code == 0, pids
+          assert json.loads(pids.output)["children_created"] < 96
+
+          child = run("child_sleep", ContainmentPolicy(timeout_seconds=1))
+          assert child.status == "timed_out"
+          leftovers = subprocess.run(
+              ["podman", "ps", "-a", "--filter", "name=sentinel-agent-", "--format", "{{.ID}}"],
+              check=True, capture_output=True, text=True, timeout=10,
+          )
+          assert not leftovers.stdout.strip(), leftovers.stdout
+          print("PASS: deny-by-default probe, output/tmpfs/PID limits, timeout, and disposable-container cleanup")
           PY
       - name: Verify effective container configuration
         run: |
