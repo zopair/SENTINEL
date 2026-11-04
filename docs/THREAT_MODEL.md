@@ -24,7 +24,7 @@ The current evaluation uses deterministic scripted strategies and algorithmic ex
 | Threat | Current control | Residual limitation |
 |---|---|---|
 | Accidental contact with real assets | Core engine has no network client or production integration | Does not prove safety of arbitrary wrappers or future plugins |
-| Resource exhaustion | Hard node, depth, step, and branching budgets | No OS-level CPU/memory isolation in the core |
+| Resource exhaustion | Hard node, depth, step, branching, seed-count, and estimated telemetry-record budgets | No OS-level CPU/memory isolation in the core |
 | Secret leakage into decoys | Fictional in-memory content; synthetic-only policy | Operator could supply sensitive data to future extensions |
 | Misleading benchmark claims | Matched seeds, published policy definitions, uncertainty summaries | Heuristic and scripted-agent design may bias results |
 | Agent escape or host compromise | External untrusted agents are disabled | No independently reviewed disposable runtime exists |
