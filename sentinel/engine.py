@@ -3,8 +3,13 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 import hashlib
+import random
 import time
 from typing import Any
+
+
+POLICIES = ("static_decoy", "random_walk", "greedy", "bfs", "dfs", "adaptive")
+POLICY_ALIASES = {"baseline": "bfs"}
 
 
 @dataclass(frozen=True)
@@ -44,18 +49,15 @@ class Event:
 
 
 class DeceptionEngine:
-    """Generate and explore synthetic decoys within explicit resource budgets.
+    """Explore a synthetic graph with reproducible, budget-bounded policies.
 
-    The adaptive policy is a transparent deterministic heuristic used for
-    controlled experiments, not a model of real attacker behavior.
+    Policies are controlled algorithmic baselines, not models of real attackers.
+    The adaptive policy is a transparent heuristic, not machine learning.
     """
     KINDS = ("service", "document", "repository", "dashboard", "credential_hint")
     ADAPTIVE_PRIORITY = {
-        "credential_hint": 5,
-        "repository": 4,
-        "dashboard": 3,
-        "service": 2,
-        "document": 1,
+        "credential_hint": 5, "repository": 4, "dashboard": 3,
+        "service": 2, "document": 1,
     }
 
     def __init__(self, config: EngineConfig | None = None) -> None:
@@ -72,40 +74,44 @@ class DeceptionEngine:
         ).hexdigest()[:12]
         kind = self.KINDS[int(digest, 16) % len(self.KINDS)]
         node = Node(
-            node_id=f"decoy-{digest}",
-            kind=kind,
+            node_id=f"decoy-{digest}", kind=kind,
             title=f"Synthetic {kind.replace('_', ' ').title()} {ordinal + 1}",
-            depth=depth,
-            parent_id=parent_id,
+            depth=depth, parent_id=parent_id,
         )
         self.nodes[node.node_id] = node
         return node
 
     def _record(self, event_type: str, node: Node, detail: str) -> None:
-        self.events.append(Event(
-            len(self.events) + 1, event_type, node.node_id, node.depth, detail
-        ))
+        self.events.append(Event(len(self.events) + 1, event_type, node.node_id, node.depth, detail))
 
     def run(self, policy: str = "baseline") -> dict[str, Any]:
-        """Explore using FIFO baseline or deterministic adaptive prioritization."""
-        if policy not in {"baseline", "adaptive"}:
-            raise ValueError("policy must be 'baseline' or 'adaptive'")
+        """Run one policy; baseline remains a backwards-compatible BFS alias."""
+        policy = POLICY_ALIASES.get(policy, policy)
+        if policy not in POLICIES:
+            raise ValueError(f"policy must be one of: {', '.join(POLICIES)}")
 
         started = time.monotonic()
+        rng = random.Random(self.config.seed ^ 0x5E17)
         frontier = [next(iter(self.nodes.values()))]
         visited: set[str] = set()
         steps = 0
 
         while frontier and steps < self.config.max_steps:
-            if policy == "baseline":
+            if policy in {"static_decoy", "bfs"}:
                 current = frontier.pop(0)
-            else:
-                # Stable tie-breaking preserves insertion order.
-                best_index = max(
+            elif policy == "dfs":
+                current = frontier.pop()
+            elif policy == "random_walk":
+                current = frontier.pop(rng.randrange(len(frontier)))
+            elif policy == "greedy":
+                index = max(range(len(frontier)), key=lambda i: self.ADAPTIVE_PRIORITY[frontier[i].kind])
+                current = frontier.pop(index)
+            else:  # adaptive: combine decoy attractiveness with a depth-seeking term
+                index = max(
                     range(len(frontier)),
-                    key=lambda index: self.ADAPTIVE_PRIORITY[frontier[index].kind],
+                    key=lambda i: self.ADAPTIVE_PRIORITY[frontier[i].kind] * 10 + frontier[i].depth,
                 )
-                current = frontier.pop(best_index)
+                current = frontier.pop(index)
 
             if current.node_id in visited:
                 continue
@@ -117,10 +123,7 @@ class DeceptionEngine:
                 self._record("depth_budget_reached", current, "Maximum depth reached")
                 continue
 
-            count = min(
-                self.config.branching_factor,
-                self.config.max_nodes - len(self.nodes),
-            )
+            count = min(self.config.branching_factor, self.config.max_nodes - len(self.nodes))
             for _ in range(max(0, count)):
                 child = self._create_node(current.node_id, current.depth + 1)
                 frontier.append(child)
@@ -133,18 +136,13 @@ class DeceptionEngine:
 
         deepest = max((self.nodes[node_id].depth for node_id in visited), default=0)
         return {
-            "policy": policy,
-            "config": asdict(self.config),
+            "policy": policy, "config": asdict(self.config),
             "metrics": {
-                "nodes_created": len(self.nodes),
-                "nodes_visited": len(visited),
-                "events": len(self.events),
-                "steps": steps,
+                "nodes_created": len(self.nodes), "nodes_visited": len(visited),
+                "events": len(self.events), "steps": steps,
                 "deepest_visited_level": deepest,
                 "interaction_rate": round(len(visited) / max(1, len(self.nodes)), 4),
-                "step_budget_utilization": round(
-                    steps / max(1, self.config.max_steps), 4
-                ),
+                "step_budget_utilization": round(steps / max(1, self.config.max_steps), 4),
                 "elapsed_ms": round((time.monotonic() - started) * 1000, 3),
                 "real_asset_exposure": 0,
             },
