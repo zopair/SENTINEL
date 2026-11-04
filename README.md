@@ -55,6 +55,7 @@ Do not connect this prototype to production networks or expose it as a public ho
 - [Research references](docs/RESEARCH_SOURCES.md)
 - [Computing and isolation options](docs/COMPUTING_AND_ISOLATION_OPTIONS.md)
 - [Security policy](SECURITY.md)
+- [Lab guide](lab/README.md)
 - [Lab containment design](lab/CONTAINMENT_DESIGN.md)
 
 MIT License. See [LICENSE](LICENSE).
