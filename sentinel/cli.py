@@ -27,7 +27,7 @@ def main() -> None:
     labyrinth.add_argument("--max-depth", type=int, default=8)
     labyrinth.add_argument("--branching-factor", type=int, default=3)
     labyrinth.add_argument("--actions", nargs="+",
-        choices=("inspect", "follow", "enumerate", "verify", "wait"),
+        choices=("inspect", "follow", "enumerate", "verify", "collect", "wait"),
         default=["inspect", "follow", "verify", "enumerate"])
 
     profiles = sub.add_parser("profiles", help="evaluate scripted synthetic agent strategies")
