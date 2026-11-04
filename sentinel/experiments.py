@@ -81,7 +81,7 @@ def compare_policies(
         raise ValueError("seed values must be unique for paired comparisons")
     EngineConfig(seed=0, max_nodes=max_nodes, max_depth=max_depth,
                  max_steps=max_steps, branching_factor=branching_factor).validate()
-    estimated_records = len(seed_list) * len(POLICIES) * (2 * max_nodes + 2) + 1
+    estimated_records = len(seed_list) * len(POLICIES) * (4 * max_nodes + 2) + 1
     if estimated_records > MAX_EXPERIMENT_RECORDS:
         raise ValueError(
             f"estimated JSONL records ({estimated_records}) exceed the safety limit "
