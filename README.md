@@ -23,6 +23,11 @@ python -m pip install -e ".[dev]"
 pytest
 sentinel run --seed 7 --steps 20 --max-nodes 64
 sentinel compare --seeds 7 17 27 --steps 20 --jsonl
+
+# Optional local synthetic-only container run (rootless Podman)
+podman build -f lab/podman/Containerfile -t sentinel-core:local .
+chmod +x lab/podman/run-synthetic.sh
+./lab/podman/run-synthetic.sh
 ```
 
 ## Current prototype
@@ -43,5 +48,6 @@ Do not connect this prototype to production networks or expose it as a public ho
 - [Roadmap](docs/ROADMAP.md)
 - [Research references](docs/RESEARCH_SOURCES.md)
 - [Security policy](SECURITY.md)
+- [Lab containment design](lab/CONTAINMENT_DESIGN.md)
 
 MIT License. See [LICENSE](LICENSE).
