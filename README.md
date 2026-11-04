@@ -17,7 +17,8 @@ This is a narrow, testable question. SENTINEL does not claim that an attacker, i
 - Six exploration policies with matched seeds: Static Decoy, Random Walk, Greedy, BFS, DFS, and Adaptive.
 - Deterministic scripted behavior profiles (six profiles; not learning agents).
 - Fictional decoy documents and synthetic telemetry.
-- JSON/JSONL schema 2.0 with paired per-seed differences, Monte Carlo sign-flip tests, and Holm-adjusted p-values.\n- Hard configuration ceilings: 4,096 nodes, depth 64, 4,096 steps, and branching factor 1–8.
+- JSON/JSONL schema 2.0 with paired per-seed differences, Monte Carlo sign-flip tests, and Holm-adjusted p-values.
+- Hard configuration ceilings: 4,096 nodes, depth 64, 4,096 steps, and branching factor 1–8.
 - Rootless Podman CI containment fixtures; these are tests, not proof of escape-proof isolation.
 - Browser Visual Lab and local JSONL reader on GitHub Pages.
 
@@ -44,7 +45,8 @@ pytest
 
 sentinel run --seed 7 --steps 20 --policy adaptive
 sentinel profiles --seeds 7 17 27
-sentinel compare --seeds $(seq 1 30) --steps 20 --jsonl > results.jsonl\nsentinel web --port 8765
+sentinel compare --seeds $(seq 1 30) --steps 20 --jsonl > results.jsonl
+sentinel web --port 8765
 ~~~
 
 For reproducibility, preserve the exact command, package version, seed list, and output file with any reported result. The CLI default comparison uses 30 seeds.
