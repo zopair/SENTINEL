@@ -38,7 +38,7 @@ The current evaluation uses deterministic scripted strategies and algorithmic ex
 - **DFS:** LIFO depth-first exploration.
 - **Adaptive:** deterministic heuristic combining decoy-kind priority and depth.
 
-The legacy name baseline remains a backwards-compatible alias for BFS. The graph is generated lazily under the same deterministic seed and budgets for all policies. Static Decoy is a non-adaptive selection control, not a separately pre-materialized immutable world.
+The legacy name baseline remains a backwards-compatible alias for BFS. The graph is pre-generated deterministically before policy execution. Every policy receives the identical node set and topology for a given seed/configuration. Static Decoy uses fixed identifier ordering without behavior-based reprioritization; BFS uses FIFO order.
 
 ## Evaluation and interpretation
 Experiments use identical seeds and resource budgets across policies. Report per-policy distributions and paired per-seed differences against Static Decoy. The current implementation reports descriptive normal-approximation 95% confidence intervals; they are not a substitute for a pre-registered statistical analysis and may be unreliable for small samples or non-normal outcomes.
