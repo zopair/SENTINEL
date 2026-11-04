@@ -53,6 +53,11 @@ def test_run_spec_requires_full_immutable_image_digest(image):
         AgentRunSpec(image=image, command=["agent"])
 
 
+def test_run_spec_accepts_content_addressed_local_image_id():
+    spec = AgentRunSpec(image="sha256:" + ("c" * 64), command=["probe"])
+    assert spec.image.startswith("sha256:")
+
+
 def test_run_spec_requires_bounded_argv_vector():
     with pytest.raises(ValueError):
         AgentRunSpec(image=IMAGE, command="agent")

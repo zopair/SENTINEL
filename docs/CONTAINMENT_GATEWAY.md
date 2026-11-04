@@ -6,7 +6,7 @@ The gateway is the only approved path for a future external-agent execution. It 
 
 ## Implemented foundation
 
-- Immutable run specification with a full SHA-256 image digest; mutable tags such as `latest` are rejected.
+- Immutable run specification with a full SHA-256 registry digest or local content-addressed image ID; mutable tags such as `latest` are rejected.
 - Bounded policy values for memory, CPU, process count, wall-clock time, captured output, and temporary storage.
 - Rootless Podman is verified before each run. Failure to verify rootless mode fails closed.
 - Fixed runtime profile: no network, read-only root filesystem, all Linux capabilities dropped, no-new-privileges, non-root UID/GID, bounded PID/memory/CPU, and a small noexec/nosuid/nodev tmpfs.
