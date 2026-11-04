@@ -43,7 +43,14 @@ def main() -> None:
     compare.add_argument("--branching-factor", type=int, default=3)
     compare.add_argument("--jsonl", action="store_true")
 
+    web = sub.add_parser("web", help="open the loopback-only interactive research lab")
+    web.add_argument("--port", type=int, default=8765)
+
     args = parser.parse_args()
+    if args.command == "web":
+        from sentinel.web import serve
+        serve(args.port)
+        return
     if args.command == "run":
         result = DeceptionEngine(EngineConfig(
             seed=args.seed, max_steps=args.steps, max_nodes=args.max_nodes,
