@@ -114,6 +114,38 @@ class SentinelExplainer(Scene):
         self.wait(0.8)
         self.play(FadeOut(VGroup(rows, foot)), run_time=0.5)
 
+
+    def statistical_evidence(self):
+        header = self.heading(
+            "03 / Statistical evaluation",
+            "From impressions to paired evidence",
+            "Each seed contributes a matched difference—not an isolated anecdote."
+        )
+        axis = Line(LEFT * 4.2, RIGHT * 4.2, color="#555963", stroke_width=2).shift(DOWN * 0.55)
+        zero = Line(DOWN * 0.12, UP * 0.12, color=TEAL, stroke_width=2).move_to(axis.get_center())
+        rows = VGroup()
+        offsets = [-0.72, -0.32, 0.18, 0.48, -0.12]
+        for i, offset in enumerate(offsets):
+            y = 0.95 - i * 0.48
+            left = Dot([-2.8, y, 0], color=MUTED, radius=0.055)
+            right = Dot([offset * 2.0, y, 0], color=GOLD, radius=0.065)
+            pair = Line(left.get_center(), right.get_center(), color=GOLD, stroke_width=2)
+            rows.add(VGroup(pair, left, right))
+        labels = VGroup(
+            Text("MATCHED PER-SEED DIFFERENCES", font_size=17, color=GOLD),
+            Text("DESCRIPTIVE 95% CONFIDENCE INTERVAL", font_size=17, color=PALE),
+            Text("10,000-DRAW SIGN-FLIP TEST  •  HOLM ADJUSTMENT", font_size=16, color=TEAL),
+        ).arrange(DOWN, buff=0.22).to_edge(DOWN, buff=0.32)
+        note = Text("SCHEMATIC EXPLANATION — NOT EXPERIMENTAL RESULT DATA",
+                    font_size=13, color=MUTED).to_edge(UP, buff=0.35)
+        self.play(FadeOut(header), run_time=0.25)
+        self.play(Create(axis), Create(zero), run_time=0.7)
+        self.play(LaggedStart(*[FadeIn(r, shift=RIGHT * 0.12) for r in rows], lag_ratio=0.16),
+                  run_time=1.1)
+        self.play(FadeIn(labels), FadeIn(note), run_time=0.8)
+        self.wait(2.0)
+        self.play(FadeOut(VGroup(axis, zero, rows, labels, note)), run_time=0.6)
+
     def bounds_and_lab(self):
         header = self.heading(
             "03 / Evidence and engineering discipline",
