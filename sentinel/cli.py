@@ -2,6 +2,7 @@
 import argparse
 import json
 
+from sentinel.deception import AdaptiveLabyrinth, LabyrinthConfig
 from sentinel.engine import DeceptionEngine, EngineConfig
 from sentinel.experiments import compare_policies, to_jsonl
 
@@ -19,6 +20,20 @@ def main() -> None:
     run.add_argument("--max-depth", type=int, default=8)
     run.add_argument("--branching-factor", type=int, default=3)
     run.add_argument("--policy", choices=("baseline", "adaptive"), default="baseline")
+
+    labyrinth = sub.add_parser(
+        "labyrinth", help="run an action-conditioned synthetic labyrinth session"
+    )
+    labyrinth.add_argument("--seed", type=int, default=7)
+    labyrinth.add_argument("--steps", type=int, default=20)
+    labyrinth.add_argument("--max-nodes", type=int, default=64)
+    labyrinth.add_argument("--max-depth", type=int, default=8)
+    labyrinth.add_argument("--branching-factor", type=int, default=3)
+    labyrinth.add_argument(
+        "--actions", nargs="+",
+        choices=("inspect", "follow", "enumerate", "verify", "wait"),
+        default=["inspect", "follow", "verify", "enumerate"],
+    )
 
     compare = sub.add_parser(
         "compare", help="compare baseline and adaptive policies across seeds"
@@ -39,6 +54,17 @@ def main() -> None:
             max_depth=args.max_depth,
             branching_factor=args.branching_factor,
         )).run(policy=args.policy)
+        print(json.dumps(result, indent=2))
+        return
+
+    if args.command == "labyrinth":
+        result = AdaptiveLabyrinth(LabyrinthConfig(
+            seed=args.seed,
+            max_steps=args.steps,
+            max_nodes=args.max_nodes,
+            max_depth=args.max_depth,
+            branching_factor=args.branching_factor,
+        )).run(args.actions)
         print(json.dumps(result, indent=2))
         return
 
