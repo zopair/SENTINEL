@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import random
 from math import sqrt
 from statistics import mean, pstdev
 from typing import Any, Iterable
@@ -12,6 +13,7 @@ METRIC_KEYS = (
     "nodes_created", "nodes_visited", "steps", "deepest_visited_level",
     "interaction_rate", "step_budget_utilization",
 )
+PERMUTATIONS = 10_000
 
 
 def _interval(values: list[float]) -> dict[str, float]:
@@ -22,6 +24,40 @@ def _interval(values: list[float]) -> dict[str, float]:
     margin = 1.96 * (pstdev(values) / sqrt(len(values))) if len(values) > 1 else 0.0
     return {"mean": round(avg, 4), "ci95_low": round(avg - margin, 4),
             "ci95_high": round(avg + margin, 4), "sd": round(pstdev(values), 4)}
+
+
+def _paired_sign_flip_test(
+    differences: list[float], *, permutations: int = PERMUTATIONS, seed: int = 20261104
+) -> float:
+    """Two-sided Monte Carlo paired randomization test for a mean difference.
+
+    This is an exploratory test under exchangeable sign assignments, not proof of
+    practical importance. The +1 correction prevents a zero Monte Carlo p-value.
+    """
+    if not differences:
+        return 1.0
+    observed = abs(mean(differences))
+    if observed == 0 or len(differences) == 1:
+        return 1.0
+    rng = random.Random(seed)  # nosec B311 - deterministic experiment resampling only
+    extreme = 0
+    for _ in range(permutations):
+        permuted = abs(mean(value if rng.getrandbits(1) else -value for value in differences))
+        if permuted >= observed - 1e-12:
+            extreme += 1
+    return (extreme + 1) / (permutations + 1)
+
+
+def _holm_adjust(raw: dict[tuple[str, str], float]) -> dict[tuple[str, str], float]:
+    """Holm step-down family-wise adjustment across all reported paired tests."""
+    ordered = sorted(raw.items(), key=lambda item: item[1])
+    count = len(ordered)
+    adjusted: dict[tuple[str, str], float] = {}
+    running = 0.0
+    for rank, (key, p_value) in enumerate(ordered):
+        running = max(running, min(1.0, (count - rank) * p_value))
+        adjusted[key] = round(running, 6)
+    return adjusted
 
 
 def compare_policies(
@@ -49,21 +85,35 @@ def compare_policies(
         } for policy in POLICIES
     }
     paired = {}
-    reference = "static_decoy"
-    for policy in POLICIES:
-        if policy == reference:
+    raw_p_values: dict[tuple[str, str], float] = {}
+    for policy_index, policy in enumerate(POLICIES):
+        if policy == "static_decoy":
             continue
         paired[policy] = {}
-        for metric in METRIC_KEYS:
-            values = {
-                r["seed"]: float(r["metrics"][metric])
-                for r in runs if r["policy"] == policy
+        for metric_index, metric in enumerate(METRIC_KEYS):
+            values = {r["seed"]: float(r["metrics"][metric])
+                      for r in runs if r["policy"] == policy}
+            baseline = {r["seed"]: float(r["metrics"][metric])
+                        for r in runs if r["policy"] == "static_decoy"}
+            differences = [values[s] - baseline[s] for s in seed_list]
+            paired[policy][metric] = _interval(differences)
+            raw_p_values[(policy, metric)] = _paired_sign_flip_test(
+                differences, seed=20261104 + policy_index * 101 + metric_index
+            )
+
+    adjusted = _holm_adjust(raw_p_values)
+    paired_tests = {
+        policy: {
+            metric: {
+                "method": "paired_sign_flip_permutation_monte_carlo",
+                "permutations": PERMUTATIONS,
+                "p_value": round(raw_p_values[(policy, metric)], 6),
+                "p_value_holm": adjusted[(policy, metric)],
             }
-            baseline = {
-                r["seed"]: float(r["metrics"][metric])
-                for r in runs if r["policy"] == reference
-            }
-            paired[policy][metric] = _interval([values[s] - baseline[s] for s in seed_list])
+            for metric in METRIC_KEYS
+        }
+        for policy in paired
+    }
 
     return {
         "schema_version": "2.0",
@@ -71,15 +121,22 @@ def compare_policies(
         "seeds": seed_list,
         "seed_count": len(seed_list),
         "recommended_minimum_seeds": 30,
-        "statistical_method": "paired per-seed differences; normal-approximation 95% CI (1.96); descriptive, not a significance claim",
+        "statistical_method": (
+            "paired per-seed differences; descriptive normal-approximation 95% CI; "
+            "two-sided paired sign-flip Monte Carlo test with 10000 permutations; "
+            "Holm correction across reported policy/metric tests; exploratory only"
+        ),
         "runs": runs,
         "summary": summary,
         "paired_difference_vs_static_decoy": paired,
+        "paired_tests_vs_static_decoy": paired_tests,
         "limitations": [
             "All policies run on the exact same pre-generated graph for each seed/configuration.",
             "Adaptive is a hand-designed deterministic heuristic, not a learning agent.",
             "Scripted profiles and policy heuristics may share design assumptions; held-out strategies are needed.",
             "Normal-approximation intervals are descriptive and may be unreliable for small samples or non-normal outcomes.",
+            "Permutation p-values depend on exchangeability assumptions and Monte Carlo sampling; they do not measure practical effect size.",
+            "Holm adjustment covers the reported paired policy/metric tests, not analyses selected after inspecting results.",
             "No real attacker, production network, or real asset is exercised.",
         ],
     }
@@ -106,6 +163,7 @@ def to_jsonl(result: dict[str, Any]) -> str:
     }
     if version == "2.0":
         summary["paired_difference_vs_static_decoy"] = result["paired_difference_vs_static_decoy"]
+        summary["paired_tests_vs_static_decoy"] = result["paired_tests_vs_static_decoy"]
         summary["limitations"] = result["limitations"]
     lines.append(json.dumps(summary, sort_keys=True))
     return "\n".join(lines) + "\n"
