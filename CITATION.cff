@@ -2,6 +2,16 @@ cff-version: 1.2.0
 message: "If you use SENTINEL in research, please cite the repository and the exact commit used."
 title: "SENTINEL: Adaptive Cyber Deception Research Lab"
 type: software
+abstract: >-
+  An open-source research framework for studying adaptive cyber deception inside bounded synthetic environments. SENTINEL combines matched multi-policy experiments, paired statistical reporting, explicit resource ceilings, versioned telemetry, and a local-first research laboratory. Current evidence is synthetic; the Adaptive policy is a deterministic heuristic.
+keywords:
+  - cyber deception
+  - adaptive cyber deception
+  - deception technology
+  - synthetic decoy environments
+  - reproducible research
+  - cybersecurity experimentation
+  - statistical evaluation
 authors:
   - family-names: Zopair
     given-names: SENTINEL contributors
