@@ -51,7 +51,7 @@ checks = {
     "network_none": host.get("NetworkMode") == "none",
     "read_only_rootfs": host.get("ReadonlyRootfs") is True,
     "non_root_uid": config.get("User") == "10001:10001",
-    "capabilities_dropped": "ALL" in (host.get("CapDrop") or []),
+    "capabilities_dropped": "all" in [str(value).lower() for value in (host.get("CapDrop") or [])],
     "no_new_privileges": any("no-new-privileges" in str(x) for x in (host.get("SecurityOpt") or [])),
     "pid_limit_64": host.get("PidsLimit") == 64,
     "memory_limit_128m": host.get("Memory") == 134217728,
