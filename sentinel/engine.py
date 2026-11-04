@@ -1,4 +1,4 @@
-"""Safe in-memory procedural deception graph; no sockets, shell, or host-file access."""
+""""Safe in-memory procedural deception graph; no sockets, shell, or host-file access."""
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
@@ -104,8 +104,8 @@ class DeceptionEngine:
             raise ValueError(f"policy must be one of: {', '.join(POLICIES)}")
 
         started = time.monotonic()
-        # Deterministic PRNG is intentional for reproducible experiments; never use for secrets. # nosec B311
-        rng = random.Random(self.config.seed ^ 0x5E17)
+        # Deterministic PRNG is intentional for reproducible experiments, never for secrets.
+        rng = random.Random(self.config.seed ^ 0x5E17)  # nosec B311
         root = next(iter(self.nodes.values()))
         frontier = [root]
         visited: set[str] = set()
@@ -166,3 +166,4 @@ class DeceptionEngine:
             },
             "events": [asdict(event) for event in self.events],
         }
+}
