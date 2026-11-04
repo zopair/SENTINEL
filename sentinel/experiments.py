@@ -20,10 +20,8 @@ def _interval(values: list[float]) -> dict[str, float]:
         return {"mean": 0.0, "ci95_low": 0.0, "ci95_high": 0.0, "sd": 0.0}
     avg = mean(values)
     margin = 1.96 * (pstdev(values) / sqrt(len(values))) if len(values) > 1 else 0.0
-    return {
-        "mean": round(avg, 4), "ci95_low": round(avg - margin, 4),
-        "ci95_high": round(avg + margin, 4), "sd": round(pstdev(values), 4),
-    }
+    return {"mean": round(avg, 4), "ci95_low": round(avg - margin, 4),
+            "ci95_high": round(avg + margin, 4), "sd": round(pstdev(values), 4)}
 
 
 def compare_policies(
@@ -31,11 +29,11 @@ def compare_policies(
     *, max_nodes: int = 64, max_depth: int = 8,
     max_steps: int = 20, branching_factor: int = 3,
 ) -> dict[str, Any]:
-    """Compare six policies with matched seeds, graph inputs, and resource budgets."""
+    """Compare six policies on identical pre-generated graphs and budgets."""
     seed_list = list(seeds)
     if not seed_list:
         raise ValueError("at least one seed is required")
-    runs: list[dict[str, Any]] = []
+    runs = []
     for seed in seed_list:
         config = EngineConfig(seed=seed, max_nodes=max_nodes, max_depth=max_depth,
                               max_steps=max_steps, branching_factor=branching_factor)
@@ -44,12 +42,12 @@ def compare_policies(
             runs.append({"seed": seed, "policy": policy,
                          "metrics": result["metrics"], "events": result["events"]})
 
-    summary = {}
-    for policy in POLICIES:
-        selected = [r["metrics"] for r in runs if r["policy"] == policy]
-        summary[policy] = {key: _interval([float(m[key]) for m in selected])
-                           for key in METRIC_KEYS}
-
+    summary = {
+        policy: {
+            key: _interval([float(r["metrics"][key]) for r in runs if r["policy"] == policy])
+            for key in METRIC_KEYS
+        } for policy in POLICIES
+    }
     paired = {}
     reference = "static_decoy"
     for policy in POLICIES:
@@ -57,16 +55,15 @@ def compare_policies(
             continue
         paired[policy] = {}
         for metric in METRIC_KEYS:
-            by_seed = {
+            values = {
                 r["seed"]: float(r["metrics"][metric])
                 for r in runs if r["policy"] == policy
             }
-            ref_by_seed = {
+            baseline = {
                 r["seed"]: float(r["metrics"][metric])
                 for r in runs if r["policy"] == reference
             }
-            differences = [by_seed[s] - ref_by_seed[s] for s in seed_list]
-            paired[policy][metric] = _interval(differences)
+            paired[policy][metric] = _interval([values[s] - baseline[s] for s in seed_list])
 
     return {
         "schema_version": "2.0",
@@ -75,36 +72,40 @@ def compare_policies(
         "seed_count": len(seed_list),
         "recommended_minimum_seeds": 30,
         "statistical_method": "paired per-seed differences; normal-approximation 95% CI (1.96); descriptive, not a significance claim",
-        "runs": runs, "summary": summary,
+        "runs": runs,
+        "summary": summary,
         "paired_difference_vs_static_decoy": paired,
         "limitations": [
-            "All policies are algorithmic baselines operating in the same synthetic, lazily generated graph.",
+            "All policies run on the exact same pre-generated graph for each seed/configuration.",
             "Adaptive is a hand-designed deterministic heuristic, not a learning agent.",
-            "Scripted profiles and policy heuristics may share design assumptions; held-out external strategies are needed.",
-            "A 95% normal-approximation interval is descriptive and may be unreliable for small samples or non-normal outcomes.",
-            "No real attacker, production network, or real asset is exercised."
+            "Scripted profiles and policy heuristics may share design assumptions; held-out strategies are needed.",
+            "Normal-approximation intervals are descriptive and may be unreliable for small samples or non-normal outcomes.",
+            "No real attacker, production network, or real asset is exercised.",
         ],
     }
 
 
 def to_jsonl(result: dict[str, Any]) -> str:
-    """Serialize run events and summaries as newline-delimited JSON records."""
-    lines: list[str] = []
+    """Serialize v1 legacy or v2 research telemetry without changing old fixtures."""
+    version = result["schema_version"]
+    lines = []
     for run in result["runs"]:
         for event in run["events"]:
             lines.append(json.dumps({
-                "schema_version": result["schema_version"], "record_type": "event",
+                "schema_version": version, "record_type": "event",
                 "seed": run["seed"], "policy": run["policy"], **event,
             }, sort_keys=True))
         lines.append(json.dumps({
-            "schema_version": result["schema_version"], "record_type": "run_summary",
+            "schema_version": version, "record_type": "run_summary",
             "seed": run["seed"], "policy": run["policy"], "metrics": run["metrics"],
         }, sort_keys=True))
-    lines.append(json.dumps({
-        "schema_version": result["schema_version"], "record_type": "experiment_summary",
+    summary = {
+        "schema_version": version, "record_type": "experiment_summary",
         "experiment": result["experiment"], "seeds": result["seeds"],
-        "summary": result["summary"], "paired_difference_vs_static_decoy":
-            result["paired_difference_vs_static_decoy"],
-        "limitations": result["limitations"],
-    }, sort_keys=True))
+        "summary": result["summary"],
+    }
+    if version == "2.0":
+        summary["paired_difference_vs_static_decoy"] = result["paired_difference_vs_static_decoy"]
+        summary["limitations"] = result["limitations"]
+    lines.append(json.dumps(summary, sort_keys=True))
     return "\n".join(lines) + "\n"
