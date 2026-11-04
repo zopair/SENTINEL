@@ -1,6 +1,10 @@
 name: Render SENTINEL explainer
 
 on:
+  pull_request:
+    paths:
+      - "media/**"
+      - ".github/workflows/render-explainer.yml"
   workflow_dispatch:
 
 permissions:
@@ -33,20 +37,21 @@ jobs:
       - name: Install Manim
         run: python -m pip install -r media/requirements.txt
 
-      - name: Render 1080p explainer
+      - name: Render 1080p 60fps explainer
         run: |
-          manim -qh --fps 30 --resolution 1920,1080             media/sentinel_explainer.py SentinelExplainer
+          manim -qh --fps 60 --resolution 1920,1080 \
+            media/sentinel_explainer.py SentinelExplainer
 
       - name: Collect MP4
         run: |
           mkdir -p rendered
-          find media -type f -name 'SentinelExplainer.mp4' -exec cp {} rendered/SENTINEL-explainer-1080p.mp4 \;
-          test -s rendered/SENTINEL-explainer-1080p.mp4
+          find media -type f -name 'SentinelExplainer.mp4' -exec cp {} rendered/SENTINEL-explainer-1080p-60fps.mp4 \;
+          test -s rendered/SENTINEL-explainer-1080p-60fps.mp4
 
       - name: Upload rendered video
         uses: actions/upload-artifact@v4
         with:
-          name: SENTINEL-explainer-1080p
-          path: rendered/SENTINEL-explainer-1080p.mp4
+          name: SENTINEL-explainer-1080p-60fps
+          path: rendered/SENTINEL-explainer-1080p-60fps.mp4
           if-no-files-found: error
           retention-days: 30
