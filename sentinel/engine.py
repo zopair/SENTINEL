@@ -1,4 +1,4 @@
-""""Safe in-memory procedural deception graph; no sockets, shell, or host-file access."""
+"""Safe in-memory procedural deception graph; no sockets, shell, or host-file access."""
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
