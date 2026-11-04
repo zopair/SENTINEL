@@ -26,7 +26,8 @@
 ## v0.5 — Adaptive Deception Environment
 - [x] Action-conditioned synthetic labyrinth with bounded challenge reformulation.
 - [x] Deterministic behavior classification and challenge recommendations.
-- [x] Five repeatable scripted synthetic strategy profiles and matched-budget evaluation.
+- [x] Coherent inert synthetic loot, collection events, and apparent-victory telemetry.
+- [x] Six repeatable scripted synthetic strategy profiles, including asset collection.
 - [ ] Add deception-evasion variations and held-out strategy tests.
 - [ ] Compare static and adaptive decoys across larger matched-seed batches.
 - [ ] Confidence intervals and uncertainty reporting.
