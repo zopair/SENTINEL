@@ -20,7 +20,8 @@
 - [x] Read-only JSONL telemetry adapter with bounded input and strict schema validation.
 - [x] Documented open-source computing/isolation shortlist and adoption gates.
 - [ ] Disposable VM/container adapter for authorized agents with deny-by-default egress.
-- [ ] Effective runtime configuration preflight and containment verification.
+- [x] Effective Podman configuration preflight script added; execution on a Linux lab host remains pending.
+- [ ] Containment verification and escape testing.
 - [ ] CPU, memory, process, storage, and wall-clock quotas verified on a Linux lab host.
 - [ ] Escape/containment test suite.
 - [ ] Independent review of isolation design before external-agent execution.
