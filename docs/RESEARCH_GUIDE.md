@@ -99,11 +99,12 @@ For each seed, the orchestrator builds a configuration and runs all six policies
 Elapsed wall-clock time is deliberately excluded from policy-effect comparisons because host load and runtime noise can dominate it.
 
 ### 3.6 Browser Visual Lab
-The static website contains two separate capabilities:
-1. **Illustrative browser simulation:** a local visual teaching model. It is not the Python engine and must not be reported as a Python-engine benchmark.
-2. **JSONL analytics:** reads a user-selected file locally in the browser. The file is not uploaded to a server. It is intended to inspect real CLI/CI output.
+The browser lab exposes three distinct paths:
+1. **Illustrative browser simulation:** a deterministic JavaScript teaching model. It is not the Python engine and must not be reported as a Python-engine benchmark.
+2. **Local Python-engine mode:** run `sentinel web --port 8765` from a source checkout and open `http://127.0.0.1:8765/`. The standard-library server binds only to IPv4 loopback, serves the same lab page, and accepts one bounded allowlisted JSON request at `/api/run`. It checks loopback host/remote address and the exact local Origin, accepts at most 4 KiB per request, and further limits interactive runs to 256 nodes, depth 32, and 256 steps. It has no CORS allowance, no remote agent integration, and no outbound target functionality.
+3. **JSONL analytics:** reads a user-selected CLI/CI file locally in the browser. The file is not uploaded to a server.
 
-The interface must label illustrative data, imported experiment data, and CI-produced artifacts distinctly. A chart without an identified data source is not experimental evidence.
+The static GitHub Pages deployment cannot execute Python. Use the loopback server for real interactive engine runs. The interface labels illustrative and Python-engine results separately; imported experiment files remain local. A chart without an identified data source is not experimental evidence.
 
 ## 4. Experimental design and fairness
 
