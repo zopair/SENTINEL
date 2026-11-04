@@ -5,7 +5,7 @@
 
 SENTINEL is an open-source research prototype for bounded, measurable cyber deception. It generates synthetic attack surfaces and records how authorized test agents explore them without connecting experiments to real systems.
 
-> **Status:** Early research prototype. Not a production security boundary, authentication product, honeypot deployment, or certified security control.
+> **Status:** Early research prototype. Not a production security boundary, authentication product, public honeypot deployment, or certified security control.
 
 ## Principles
 - Synthetic-only content: no real credentials, customer data, or production endpoints.
@@ -28,21 +28,16 @@ sentinel compare --seeds 7 17 27 --steps 20 --jsonl
 ```
 
 ## Current prototype
-- Deterministic procedural graph generation with FIFO baseline and adaptive priority policies.
-- Adaptive synthetic labyrinth sessions that reformulate decoy challenges from observed test-agent actions under fixed budgets.
-- Repeatable multi-seed experiment runner comparing policies under identical budgets.
-- Allowlisted built-in agent runtime with a reproducible synthetic benchmark.
-- Rootless Podman Linux CI job that checks effective settings, probes runtime containment, and exercises bounded adversarial fixtures.
-- Initial external-agent containment gateway with immutable image digests, rootless-only execution, deny-by-default isolation, bounded resources, and capped output; third-party agents are not yet integrated.
-- JSON and versioned JSONL telemetry output.
+- Deterministic procedural graph with FIFO and adaptive-priority exploration.
+- Action-conditioned synthetic labyrinth with deterministic behavior classification and bounded challenge recommendations.
+- Matched-seed experiments, JSONL telemetry, and allowlisted built-in strategies.
+- Rootless Podman CI with configuration checks and bounded synthetic fixtures for filesystem/network denial, output, tmpfs, PID pressure, timeout, and cleanup.
+- A foundation for future external-agent containment; third-party agents are not integrated or enabled.
 
-The adaptive labyrinth is deterministic experimental logic, not a trained AI model or a validated model of real attackers. Elapsed runtime is diagnostic only. A successful CI run demonstrates only the specific checks executed; it is not an escape test or security certification.
-
-## Computing and isolation
-See [Open-Source Computing and Isolation Options](docs/COMPUTING_AND_ISOLATION_OPTIONS.md), [Agent Runtime and Benchmark](docs/AGENT_RUNTIME.md), and [Containment Gateway](docs/CONTAINMENT_GATEWAY.md).
+The behavior classifier is transparent deterministic logic, not a trained neural model or a validated model of real attackers. CI demonstrates only the specific checks executed; it is not independent escape testing or security certification.
 
 ## Safety
-Do not connect this prototype to production networks or expose it as a public honeypot. Future external-agent adapters require a disposable isolated lab, deny-by-default egress, resource quotas, and independent escape-oriented review. Never pass production credentials or real customer data into an agent container.
+Do not connect this prototype to production networks or expose it as a public honeypot. Never pass production credentials or customer data into an agent container. External-agent adapters require independent containment review before implementation.
 
 ## Documentation
 - [Architecture](docs/ARCHITECTURE.md)
@@ -50,11 +45,10 @@ Do not connect this prototype to production networks or expose it as a public ho
 - [Roadmap](docs/ROADMAP.md)
 - [Research references](docs/RESEARCH_SOURCES.md)
 - [Computing and isolation options](docs/COMPUTING_AND_ISOLATION_OPTIONS.md)
-- [Open-source tooling inventory and security gates](docs/OPEN_SOURCE_TOOLING.md)
+- [Open-source tooling inventory](docs/OPEN_SOURCE_TOOLING.md)
 - [Agent runtime and benchmark](docs/AGENT_RUNTIME.md)
 - [Security policy](SECURITY.md)
 - [Lab guide](lab/README.md)
-- [Lab containment design](lab/CONTAINMENT_DESIGN.md)
 - [Containment Gateway](docs/CONTAINMENT_GATEWAY.md)
 
 MIT License. See [LICENSE](LICENSE).
