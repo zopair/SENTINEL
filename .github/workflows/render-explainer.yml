@@ -50,6 +50,11 @@ jobs:
           find media -type f -name 'SentinelExplainer.mp4' -exec cp {} rendered/SENTINEL-explainer-1080p-60fps.mp4 \;
           test -s rendered/SENTINEL-explainer-1080p-60fps.mp4
 
+      - name: Create autoplaying repository preview
+        run: |
+          ffmpeg -y -i rendered/SENTINEL-explainer-1080p-60fps.mp4 -vf "fps=10,scale=800:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=3:diff_mode=rectangle" -loop 0 rendered/sentinel-preview.gif
+          test -s rendered/sentinel-preview.gif
+
       - name: Publish rendered MP4 into the source branch
         env:
           TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
@@ -57,7 +62,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           cp rendered/SENTINEL-explainer-1080p-60fps.mp4 media/SENTINEL-explainer.mp4
-          git add media/SENTINEL-explainer.mp4
+          cp rendered/sentinel-preview.gif media/sentinel-preview.gif
+          git add media/SENTINEL-explainer.mp4 media/sentinel-preview.gif
           if git diff --cached --quiet; then
             echo "Rendered MP4 is already current."
           else
