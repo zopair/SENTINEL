@@ -1,4 +1,8 @@
 # SENTINEL
+
+![SENTINEL — autoplaying cinematic overview](media/sentinel-preview.gif)
+
+**[Open the full 1080p cinematic video](media/SENTINEL-explainer.mp4)** · [Open the bilingual research lab](https://zopair.github.io/SENTINEL/lab.html)
 ### Adaptive Cyber Deception Research Lab
 
 **The attacker follows the trail. SENTINEL controls where it leads.**
@@ -7,9 +11,7 @@ SENTINEL is an open-source cybersecurity research prototype exploring adaptive c
 
 > **Status:** Research prototype · version 0.1.0 · not a production security boundary, public honeypot, authentication system, or certified security control.
 
-![SENTINEL cinematic research visual](media/sentinel-visual.svg)
-
-**[Watch the 35-second cinematic explainer](media/SENTINEL-explainer.mp4)** · [Open the bilingual research lab](https://zopair.github.io/SENTINEL/lab.html)
+![SENTINEL research visual](media/sentinel-visual.svg)
 
 ## Research question
 Can a deterministic adaptive exploration heuristic change how a scripted explorer spends a fixed interaction budget inside a synthetic decoy graph, compared with non-adaptive and standard search baselines?
