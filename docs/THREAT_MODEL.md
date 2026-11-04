@@ -14,7 +14,8 @@ The current evaluation uses deterministic scripted strategies and algorithmic ex
 ## Trust boundaries
 | Boundary | Current status | Required rule |
 |---|---|---|
-| SENTINEL in-memory core | Implemented | Synthetic graph and fictional assets only |\n| Local research web UI | Loopback-only prototype | Bind to 127.0.0.1; validate host, origin, request size, and allowlisted fields |
+| SENTINEL in-memory core | Implemented | Synthetic graph and fictional assets only |
+| Local research web UI | Loopback-only prototype | Bind to 127.0.0.1; validate host, origin, request size, and allowlisted fields |
 | Local operator environment | Outside simulator control | Do not provide production secrets or customer data |
 | External network | Not used by core engine | No outbound target access |
 | Agent/container runtime | Not a production boundary | Do not attach untrusted agents |
@@ -24,7 +25,8 @@ The current evaluation uses deterministic scripted strategies and algorithmic ex
 | Threat | Current control | Residual limitation |
 |---|---|---|
 | Accidental contact with real assets | Core engine has no network client or production integration | Does not prove safety of arbitrary wrappers or future plugins |
-| Resource exhaustion | Hard node, depth, step, branching, seed-count, and estimated telemetry-record budgets | No OS-level CPU/memory isolation in the core |\n| Untrusted local HTTP request | Loopback binding, host/origin checks, 4 KiB request cap, strict JSON fields, and tighter web budgets | Local browser/host compromise and other local processes remain outside this boundary |
+| Resource exhaustion | Hard node, depth, step, branching, seed-count, and estimated telemetry-record budgets | No OS-level CPU/memory isolation in the core |
+| Untrusted local HTTP request | Loopback binding, host/origin checks, 4 KiB request cap, strict JSON fields, and tighter web budgets | Local browser/host compromise and other local processes remain outside this boundary |
 | Secret leakage into decoys | Fictional in-memory content; synthetic-only policy | Operator could supply sensitive data to future extensions |
 | Misleading benchmark claims | Matched seeds, published policy definitions, uncertainty summaries | Heuristic and scripted-agent design may bias results |
 | Agent escape or host compromise | External untrusted agents are disabled | No independently reviewed disposable runtime exists |
