@@ -5,7 +5,7 @@ import os
 import secrets
 import selectors
 import shutil
-import subprocess
+import subprocess  # nosec B404 - fixed argv only; shell execution is never enabled.
 import time
 
 from sentinel.containment.policy import AgentRunSpec, RunResult
@@ -25,7 +25,7 @@ class PodmanRunner:
 
     def _require_rootless(self, executable: str) -> None:
         try:
-            check = subprocess.run(
+            check = subprocess.run(  # nosec B603 - fixed Podman info argv; shell=False.
                 [executable, "info", "--format", "{{.Host.Security.Rootless}}"],
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.PIPE,
@@ -61,7 +61,7 @@ class PodmanRunner:
             if action == "rm":
                 args.insert(2, "--force")
             try:
-                subprocess.run(
+                subprocess.run(  # nosec B603 - fixed Podman lifecycle argv; shell=False.
                     args, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL, timeout=5, check=False,
                 )
@@ -82,7 +82,7 @@ class PodmanRunner:
         argv = self.build_argv(executable, name, spec)
         started = time.monotonic()
         try:
-            process = subprocess.Popen(
+            process = subprocess.Popen(  # nosec B603 - fixed Podman argv; agent args stay inside the container, shell=False.
                 argv,
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.PIPE,
@@ -97,7 +97,9 @@ class PodmanRunner:
         status = "completed"
         truncated = False
         selector = selectors.DefaultSelector()
-        assert process.stdout is not None
+        if process.stdout is None:
+            self._cleanup(executable, name, process)
+            raise RuntimeError("Podman output pipe was not created")
         selector.register(process.stdout, selectors.EVENT_READ)
         deadline = started + spec.policy.timeout_seconds
         try:
