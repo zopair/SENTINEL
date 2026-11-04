@@ -17,7 +17,7 @@ This is a narrow, testable question. SENTINEL does not claim that an attacker, i
 - Six exploration policies with matched seeds: Static Decoy, Random Walk, Greedy, BFS, DFS, and Adaptive.
 - Deterministic scripted behavior profiles (six profiles; not learning agents).
 - Fictional decoy documents and synthetic telemetry.
-- JSON/JSONL experiment output, per-policy summaries, and paired per-seed comparisons.
+- JSON/JSONL schema 2.0 with paired per-seed differences, Monte Carlo sign-flip tests, and Holm-adjusted p-values.\n- Hard configuration ceilings: 4,096 nodes, depth 64, 4,096 steps, and branching factor 1–8.
 - Rootless Podman CI containment fixtures; these are tests, not proof of escape-proof isolation.
 - Browser Visual Lab and local JSONL reader on GitHub Pages.
 
@@ -52,7 +52,7 @@ For reproducibility, preserve the exact command, package version, seed list, and
 ## Metrics and statistical reporting
 The engine reports nodes created/visited, steps, deepest visited level, interaction rate, budget utilization, elapsed runtime, and the invariant real_asset_exposure=0 for its in-memory model.
 
-The comparison exports per-policy means, standard deviations, descriptive normal-approximation 95% confidence intervals, and paired per-seed differences against Static Decoy. Runtime is excluded from policy comparisons because it is sensitive to host noise. These intervals are exploratory; they do not establish statistical significance or real-world effectiveness. Report inconclusive and negative findings.
+The comparison exports per-policy means, standard deviations, descriptive normal-approximation 95% confidence intervals, paired per-seed differences against Static Decoy, two-sided paired sign-flip Monte Carlo p-values (10,000 permutations), and Holm-adjusted p-values across the declared policy/metric family. Runtime is excluded from policy comparisons because it is sensitive to host noise. The intervals are descriptive and the permutation tests depend on exchangeability assumptions; neither establishes real-world effectiveness. Report inconclusive and negative findings.
 
 ## Limitations
 - Adaptive is a hand-designed deterministic heuristic, not machine learning.
@@ -67,10 +67,10 @@ The comparison exports per-policy means, standard deviations, descriptive normal
 Read the Threat Model before interpreting results or extending the runtime. The core engine is in-memory and does not connect to production systems or perform outbound network operations. Do not connect this prototype to production networks or expose it as a public honeypot.
 
 ## Documentation
-[Architecture](docs/ARCHITECTURE.md) · [Threat Model](docs/THREAT_MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Research references](docs/RESEARCH_SOURCES.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Security policy](SECURITY.md)
+[Research Guide](docs/RESEARCH_GUIDE.md) · [Validation Protocol](docs/VALIDATION_PROTOCOL.md) · [Architecture](docs/ARCHITECTURE.md) · [Threat Model](docs/THREAT_MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Research references](docs/RESEARCH_SOURCES.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Security policy](SECURITY.md)
 
 ## Browser Visual Lab and JSONL analytics
-The SENTINEL Pages presentation contains an illustrative browser maze and a local JSONL reader. The maze is a visual teaching demo, not the Python engine or a live attack environment. The reader parses a selected file in the browser; it does not upload that file. Sample data is illustrative only. To view real results, generate results.jsonl with the command above and load it in the page.
+The SENTINEL Pages interface separates its illustrative browser maze from imported engine/CI evidence. The browser demonstration is not the Python engine or a live attack environment. The JSONL reader parses a selected file locally in the browser; it does not upload that file. Sample data is illustrative only. To view actual engine results, generate results.jsonl with the command above and load it in the page. The complete research definitions, metric semantics, statistical assumptions, threat boundaries, and reproduction procedure are in the Research Guide.
 
 ## Citation
 See CITATION.cff for citation metadata. Cite the exact commit and experiment configuration used.
