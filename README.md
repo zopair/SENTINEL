@@ -52,6 +52,6 @@ Do not connect this prototype to production networks or expose it as a public ho
 - [Agent runtime and benchmark](docs/AGENT_RUNTIME.md)
 - [Security policy](SECURITY.md)
 - [Lab guide](lab/README.md)
-- [Lab containment design](lab/CONTAINMENT_DESIGN.md)
+- [Lab containment design](lab/CONTAINMENT_DESIGN.md)\n- [Containment Gateway](docs/CONTAINMENT_GATEWAY.md)
 
 MIT License. See [LICENSE](LICENSE).
