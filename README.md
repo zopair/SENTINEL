@@ -1,89 +1,78 @@
 # SENTINEL
-### Adaptive Cyber Deception & Trusted Access Architecture
+### Adaptive Cyber Deception Research Lab
 
 **The attacker follows the trail. SENTINEL controls where it leads.**
 
-SENTINEL is an open-source cybersecurity research prototype exploring adaptive cyber deception, synthetic honeypot environments, and autonomous-agent behavior evaluation. It creates a bounded fictional labyrinth with inert decoy assets, observes scripted agent exploration, and compares baseline and adaptive policies through reproducible experiments.
+SENTINEL is an open-source cybersecurity research prototype exploring adaptive cyber deception in a bounded, fictional environment. It generates inert synthetic decoy assets, runs controlled exploration policies, and exports reproducible telemetry.
 
-> **Status:** Early MVP / research prototype. Not a production security boundary, authentication system, public honeypot deployment, or certified security control.
+> **Status:** Research prototype · version 0.1.0 · not a production security boundary, public honeypot, authentication system, or certified security control.
 
-## Overview
+## Research question
+Can a deterministic adaptive exploration heuristic change how a scripted explorer spends a fixed interaction budget inside a synthetic decoy graph, compared with non-adaptive and standard search baselines?
 
-Security defenses commonly detect, block, or contain suspicious activity. SENTINEL explores a complementary research question: **can an agent's exploration be redirected toward believable but entirely synthetic decoy assets, while real assets remain outside the experiment?**
+This is a narrow, testable question. SENTINEL does not claim that an attacker, including a highly capable AI, can be deceived indefinitely.
 
-The maze adapts fictional challenges based on observed actions. It offers coherent, cross-referenced decoy documents and records telemetry. This is a testable research idea—not a claim that any agent, including a superintelligent system, can be deceived indefinitely.
+## Current capabilities
+- Bounded synthetic graph with explicit node, depth, step, and branching budgets.
+- Six exploration policies with matched seeds: Static Decoy, Random Walk, Greedy, BFS, DFS, and Adaptive.
+- Deterministic scripted behavior profiles (six profiles; not learning agents).
+- Fictional decoy documents and synthetic telemetry.
+- JSON/JSONL experiment output, per-policy summaries, and paired per-seed comparisons.
+- Rootless Podman CI containment fixtures; these are tests, not proof of escape-proof isolation.
+- Browser Visual Lab and local JSONL reader on GitHub Pages.
 
-## Capabilities
+## Policy comparison
+| Policy | Selection rule | Purpose |
+|---|---|---|
+| Static Decoy | FIFO, no policy reprioritization | Non-adaptive reference control |
+| Random Walk | Seeded random frontier selection | Random baseline |
+| Greedy | Highest fixed decoy-kind priority | Local heuristic baseline |
+| BFS | FIFO frontier | Breadth-first baseline |
+| DFS | LIFO frontier | Depth-first baseline |
+| Adaptive | Decoy-kind priority combined with depth | SENTINEL heuristic under evaluation |
 
-- **Adaptive synthetic labyrinth:** procedural graph with bounded nodes, depth, steps, and challenge recommendations.
-- **Behavior classification:** deterministic action-conditioned categories for inspect, follow, enumerate, verify, collect, and wait.
-- **Synthetic decoy assets:** fictional reports, service topology, vendor reconciliation, access review, and roadmap documents generated in memory.
-- **Apparent victory metrics:** synthetic collection and apparent progress metrics; no real access or value.
-- **Repeatable agent simulation:** six scripted behavior profiles, including asset-seeking behavior.
-- **Baseline vs adaptive evaluation:** matched seeds and resource budgets; JSON/JSONL telemetry.
-- **Containment testing:** rootless Podman CI fixtures test filesystem/network denial, output limits, tmpfs/PID pressure, timeout, and cleanup.
-- **Auditable experiments:** deterministic seeds, explicit limits, operator-only provenance manifest.
-
-## Architecture
-
-1. Synthetic environment creates a bounded decoy graph.
-2. Built-in agent strategies issue simulated actions.
-3. Behavior classifier labels actions deterministically.
-4. Adaptive labyrinth updates decoy challenge recommendations.
-5. Synthetic loot generator supplies inert fictional documents.
-6. Telemetry and experiments compare policies.
-7. Containment fixtures exercise local resource and isolation controls.
-
-Neural models, if explored, may propose experiment difficulty only; they do not establish trust, issue credentials, or grant permissions. External untrusted agents remain disabled pending independent containment review.
+The graph is generated lazily and deterministically under matched seeds and budgets. Static Decoy is a non-adaptive selection control, not a separately pre-generated immutable graph. The legacy baseline name remains an alias for BFS.
 
 ## Quick start
-
 Python 3.10+:
 
-```bash
+~~~bash
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
 pytest
 
-sentinel run --seed 7 --steps 20 --max-nodes 64
-sentinel labyrinth --seed 7 --actions inspect follow collect verify enumerate
+sentinel run --seed 7 --steps 20 --policy adaptive
 sentinel profiles --seeds 7 17 27
-sentinel compare --seeds 7 17 27 --steps 20 --jsonl
-```
+sentinel compare --seeds $(seq 1 30) --steps 20 --jsonl > results.jsonl
+~~~
 
-## What to measure
+For reproducibility, preserve the exact command, package version, seed list, and output file with any reported result. The CLI default comparison uses 30 seeds.
 
-Compare baseline and adaptive policies with matched seeds and budgets. Useful metrics include exploration depth, synthetic asset collection, revisit patterns, dwell/action-count proxies, resource consumption, and activity remaining inside the decoy environment. Use uncertainty estimates and held-out strategies; do not equate synthetic scores with real-world security effectiveness.
+## Metrics and statistical reporting
+The engine reports nodes created/visited, steps, deepest visited level, interaction rate, budget utilization, elapsed runtime, and the invariant real_asset_exposure=0 for its in-memory model.
 
-## Safety & limitations
+The comparison exports per-policy means, standard deviations, descriptive normal-approximation 95% confidence intervals, and paired per-seed differences against Static Decoy. Runtime is excluded from policy comparisons because it is sensitive to host noise. These intervals are exploratory; they do not establish statistical significance or real-world effectiveness. Report inconclusive and negative findings.
 
-- No real credentials, personal/customer data, production-derived secrets, or live endpoints in decoys.
-- The deception core does not connect to production systems or execute outbound network operations.
-- Resource budgets are explicit and bounded.
-- Do not connect to production networks or expose as a public honeypot.
-- Never pass production credentials or customer data to agent containers.
-- CI success is not proof of escape-proof isolation or security certification.
-- No guarantee of permanent or universal deception is claimed.
+## Limitations
+- Adaptive is a hand-designed deterministic heuristic, not machine learning.
+- Six scripted profiles are not independent evidence of generalization; policy/profile co-design may bias results.
+- Current metrics measure synthetic exploration behavior, not whether a learning agent has discovered deception.
+- Deception Discovery Cost is deferred until learning-capable agents and an operational detection definition exist.
+- No external untrusted agent is enabled; no independently reviewed disposable runtime is provided.
+- No real credentials, personal/customer data, production-derived secrets, or live endpoints belong in this lab.
+- No claim of permanent or universal deception, production isolation, or security certification is made.
+
+## Safety and threat model
+Read the Threat Model before interpreting results or extending the runtime. The core engine is in-memory and does not connect to production systems or perform outbound network operations. Do not connect this prototype to production networks or expose it as a public honeypot.
 
 ## Documentation
+[Architecture](docs/ARCHITECTURE.md) · [Threat Model](docs/THREAT_MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Research references](docs/RESEARCH_SOURCES.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Security policy](SECURITY.md)
 
-[Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT_MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Research references](docs/RESEARCH_SOURCES.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Security policy](SECURITY.md)
+## Browser Visual Lab and JSONL analytics
+The SENTINEL Pages presentation contains an illustrative browser maze and a local JSONL reader. The maze is a visual teaching demo, not the Python engine or a live attack environment. The reader parses a selected file in the browser; it does not upload that file. Sample data is illustrative only. To view real results, generate results.jsonl with the command above and load it in the page.
 
-## Search keywords
+## Citation
+See CITATION.cff for citation metadata. Cite the exact commit and experiment configuration used.
 
-Cyber deception · deception technology · adaptive honeypot · synthetic honeypot · AI agent security · agentic AI security · autonomous agent behavior · cyber defense research · threat research · red team simulation · blue team · cyber range · decoy assets · security experimentation · Python · open source cybersecurity · containment testing · adaptive cyber defense.
-
-MIT License. See [LICENSE](LICENSE).
-
-## Browser Visual Lab & JSONL Analytics
-
-The GitHub Pages presentation now includes a client-side illustrative maze simulator and a local JSONL analytics reader. The simulator is a visual teaching demo (not the Python engine or a live attack environment). The analytics panel parses `run_summary` records directly in the browser, shows summary metrics and a policy chart, and does not upload the selected file.
-
-To load real experiment results, run:
-
-```bash
-sentinel compare --seeds 7 17 27 --steps 20 --jsonl > results.jsonl
-```
-
-Open the [SENTINEL Pages presentation](https://zopair.github.io/SENTINEL/) and choose the JSONL file in the analytics panel. The included sample dataset is illustrative only and is not a benchmark claim.
+MIT License. See LICENSE.
