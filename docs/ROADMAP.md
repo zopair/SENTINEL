@@ -7,7 +7,7 @@
 ## v0.2 — Experiment science
 - [x] FIFO baseline and deterministic adaptive priority policy.
 - [x] Matched-seed comparison and versioned JSONL telemetry.
-- [ ] Confidence intervals and documented behavioral datasets.
+- [x] Descriptive per-policy confidence intervals and paired per-seed differences.\n- [x] Paired sign-flip permutation tests with Holm adjustment in schema 2.0.
 
 ## v0.3 — Isolated synthetic lab
 - [x] Rootless Podman profile, telemetry validation, Bandit, and pip-audit.
@@ -32,13 +32,13 @@
 - [ ] Compare static and adaptive decoys across larger matched-seed batches.
 - [ ] Confidence intervals and uncertainty reporting.
 
-## v0.6 — Optional behavior intelligence
+## v0.6 — Research validation and operator interface\n- [x] Self-contained technical Research Guide and Validation Protocol.\n- [x] Hard engine ceilings for nodes, depth, steps, and branching factor.\n- [x] Paired statistical tests and multiple-comparison correction.\n- [ ] Adaptive backtracking/repetition fixtures with held-out strategies.\n- [ ] Dedicated-host resource profiling and independent review.\n- [ ] Browser lab controls and verified import of actual engine/CI JSONL.\n\n## v0.7 — Optional behavior intelligence
 - [ ] Build labeled synthetic behavior datasets.
 - [ ] Compare deterministic rules with lightweight classifiers on held-out seeds.
 - [ ] Add Keras 3 only as an optional extra if measured benefit justifies its cost.
 - [ ] Neural output may recommend challenge difficulty; deterministic controls retain final authority.
 
-## v0.7 — Trusted access research
+## v0.8 — Trusted access research
 - [ ] Nonce/signature protocol and replay/relay analysis.
 - [ ] TPM2 proof of concept on supported hardware.
 - [ ] GGWave transport compared with QR/BLE/NFC.
