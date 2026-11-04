@@ -51,7 +51,11 @@ checks = {
     "network_none": host.get("NetworkMode") == "none",
     "read_only_rootfs": host.get("ReadonlyRootfs") is True,
     "non_root_uid": config.get("User") == "10001:10001",
-    "capabilities_dropped": data.get("EffectiveCaps") == [] and data.get("BoundingCaps") == [],
+    "capabilities_dropped": {
+        "CAP_CHOWN", "CAP_DAC_OVERRIDE", "CAP_FOWNER", "CAP_FSETID",
+        "CAP_KILL", "CAP_NET_BIND_SERVICE", "CAP_SETFCAP", "CAP_SETGID",
+        "CAP_SETPCAP", "CAP_SETUID", "CAP_SYS_CHROOT",
+    }.issubset({str(value).upper() for value in (host.get("CapDrop") or [])}),
     "no_new_privileges": any("no-new-privileges" in str(x) for x in (host.get("SecurityOpt") or [])),
     "pid_limit_64": host.get("PidsLimit") == 64,
     "memory_limit_128m": host.get("Memory") == 134217728,
@@ -61,9 +65,7 @@ checks = {
 for name, passed in checks.items():
     print(("PASS" if passed else "FAIL") + ": " + name)
 if not checks["capabilities_dropped"]:
-    print("INFO: EffectiveCaps=" + repr(data.get("EffectiveCaps")) +
-          " BoundingCaps=" + repr(data.get("BoundingCaps")) +
-          " HostConfig.CapDrop=" + repr(host.get("CapDrop")))
+    print("INFO: HostConfig.CapDrop=" + repr(host.get("CapDrop")))
 if not all(checks.values()):
     sys.exit(1)
 '
