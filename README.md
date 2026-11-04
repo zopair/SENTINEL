@@ -7,6 +7,21 @@ SENTINEL is an open-source cybersecurity research prototype exploring adaptive c
 
 > **Status:** Research prototype · version 0.1.0 · not a production security boundary, public honeypot, authentication system, or certified security control.
 
+
+
+## Engineering distinctions
+
+SENTINEL's contribution is not a claim of an entirely new class of deception or a guarantee against advanced attackers. Its value is the combination of controlled synthetic experimentation, explicit resource bounds, reproducible comparisons, and a lightweight hands-on research workflow.
+
+- **From anecdotal demonstrations to falsifiable evaluation:** the comparison pipeline reports paired per-seed differences, descriptive 95% confidence intervals, 10,000-draw paired sign-flip permutation tests, and Holm-adjusted p-values. These methods make assumptions and uncertainty more visible; they do not, by themselves, prove real-world defensive effectiveness.
+- **Matched multi-policy benchmarking:** six deterministic exploration policies are evaluated against the same pre-generated synthetic graph for each seed/configuration. This controls an important source of variation and supports paired comparisons; it does not eliminate every possible source of bias, including heuristic/profile co-design.
+- **Explicit resource budgets:** hard limits on graph size, depth, steps, branching, input shape, and estimated output volume bound the work the research engine will attempt. These safeguards reduce accidental runaway workloads and malformed-input risk; they are not a universal denial-of-service guarantee.
+- **A low-dependency local research lab:** the bilingual browser interface supports illustrative exploration, local JSONL inspection, and optional execution of the real Python engine through a standard-library server bound to `127.0.0.1`. Requests are constrained by host/origin checks, request-size limits, field allowlists, and tighter interactive budgets. No cloud service is required for this workflow.
+
+### Project positioning
+
+SENTINEL is an open-source research framework for studying adaptive cyber deception inside bounded synthetic environments. It combines matched multi-policy experiments, paired statistical reporting, explicit resource ceilings, and a loopback-bound interactive lab to make exploration and decoy-steering behavior easier to inspect, reproduce, and challenge. Its current evidence is synthetic and its adaptive policy is a deterministic heuristic—not a learned adversary or a production-grade security control.
+
 ## Research question
 Can a deterministic adaptive exploration heuristic change how a scripted explorer spends a fixed interaction budget inside a synthetic decoy graph, compared with non-adaptive and standard search baselines?
 
