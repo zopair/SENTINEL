@@ -16,7 +16,8 @@
 - [ ] Validate the adaptive heuristic against documented agent-behavior datasets.
 
 ## v0.3 — Isolated agent lab
-- [ ] Disposable VM/container adapter with deny-by-default egress.
+- [x] Draft rootless Podman profile for the synthetic core only (not agent isolation validation).
+- [ ] Disposable VM/container adapter for authorized agents with deny-by-default egress.
 - [ ] CPU, memory, process, storage, and wall-clock quotas.
 - [ ] Read-only agent telemetry adapter.
 - [ ] Escape/containment test suite.
