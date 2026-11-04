@@ -11,7 +11,8 @@ Study authorized test-agent behavior inside synthetic decoy environments. The re
 5. **Synthetic Victory & Bait Assets (prototype):** coherent fictional documents, topology maps, operational summaries, reconciliation records, and inert access-review artifacts. Files are generated in memory and collected as simulated loot.
 6. **Behavior Policy (prototype):** deterministic classification of synthetic action counters selects challenge families and difficulty; not a trained AI model.
 7. **Agent Runtime (synthetic prototype):** allowlisted built-in strategies only; no third-party plugins.
-8. **Experiment Orchestrator (prototype):** matched seeds, deterministic replay, apparent-reward telemetry, and transparent benchmark reports.\n9. **Local Research UI (prototype):** bilingual static interface, loopback-only standard-library HTTP adapter for real engine runs, and bounded local JSONL inspection.
+8. **Experiment Orchestrator (prototype):** matched seeds, deterministic replay, apparent-reward telemetry, and transparent benchmark reports.
+9. **Local Research UI (prototype):** bilingual static interface, loopback-only standard-library HTTP adapter for real engine runs, and bounded local JSONL inspection.
 
 ## Synthetic loot contract
 - Artifact contents are internally coherent and cross-reference fictional project and incident IDs.
