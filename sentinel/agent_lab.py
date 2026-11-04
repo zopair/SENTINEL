@@ -115,7 +115,6 @@ def benchmark(
             "telemetry_integrity": 20,
             "deterministic_replay": 15,
             "bounded_task_progress": 15,
-            "pass_threshold": 90,
         },
         "agents": policies,
         "overall_score": round(mean(item["score"] for item in policies.values()), 2),
