@@ -14,6 +14,8 @@ METRIC_KEYS = (
     "interaction_rate", "step_budget_utilization",
 )
 PERMUTATIONS = 10_000
+MAX_EXPERIMENT_SEEDS = 1_000
+MAX_EXPERIMENT_RECORDS = 100_000
 
 
 def _interval(values: list[float]) -> dict[str, float]:
@@ -66,9 +68,25 @@ def compare_policies(
     max_steps: int = 20, branching_factor: int = 3,
 ) -> dict[str, Any]:
     """Compare six policies on identical pre-generated graphs and budgets."""
-    seed_list = list(seeds)
+    seed_list = []
+    for seed in seeds:
+        if len(seed_list) >= MAX_EXPERIMENT_SEEDS:
+            raise ValueError(f"seed count exceeds the safety limit of {MAX_EXPERIMENT_SEEDS}")
+        if isinstance(seed, bool) or not isinstance(seed, int) or not -(2**63) <= seed <= 2**63 - 1:
+            raise ValueError("every seed must be a signed 64-bit integer")
+        seed_list.append(seed)
     if not seed_list:
         raise ValueError("at least one seed is required")
+    if len(set(seed_list)) != len(seed_list):
+        raise ValueError("seed values must be unique for paired comparisons")
+    EngineConfig(seed=0, max_nodes=max_nodes, max_depth=max_depth,
+                 max_steps=max_steps, branching_factor=branching_factor).validate()
+    estimated_records = len(seed_list) * len(POLICIES) * (2 * max_nodes + 2) + 1
+    if estimated_records > MAX_EXPERIMENT_RECORDS:
+        raise ValueError(
+            f"estimated JSONL records ({estimated_records}) exceed the safety limit "
+            f"of {MAX_EXPERIMENT_RECORDS}; reduce seeds or max_nodes"
+        )
     runs = []
     for seed in seed_list:
         config = EngineConfig(seed=seed, max_nodes=max_nodes, max_depth=max_depth,
