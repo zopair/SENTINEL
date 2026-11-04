@@ -1,10 +1,11 @@
-"""Adaptive, synthetic-only labyrinth sessions with explicit resource budgets."""
+"""Adaptive, synthetic-only labyrinth sessions with plausible inert loot."""
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 import hashlib
 from typing import Any, Iterable
 
+from sentinel.bait_assets import SyntheticAsset, SyntheticLootGenerator
 from sentinel.behavior import BehaviorAnalyzer
 
 
@@ -30,7 +31,7 @@ class LabyrinthConfig:
 class AdaptiveLabyrinth:
     """Deterministic simulation with no network, host, or production connectors."""
 
-    ACTIONS = frozenset({"inspect", "follow", "enumerate", "verify", "wait"})
+    ACTIONS = frozenset({"inspect", "follow", "enumerate", "verify", "collect", "wait"})
     KINDS = ("service", "document", "repository", "dashboard", "credential_hint")
 
     def __init__(self, config: LabyrinthConfig | None = None) -> None:
@@ -38,6 +39,8 @@ class AdaptiveLabyrinth:
         self.nodes: dict[str, dict[str, Any]] = {}
         self.events: list[dict[str, Any]] = []
         self.action_counts = {action: 0 for action in BehaviorAnalyzer.ACTIONS}
+        self.collected_assets: dict[str, dict[str, Any]] = {}
+        self.apparent_victory_score = 0
         self.steps = 0
         self.status = "active"
         self.assessment = BehaviorAnalyzer.analyze({})
@@ -54,10 +57,13 @@ class AdaptiveLabyrinth:
         )
         node_id = "decoy-" + digest[:12]
         kind = self.KINDS[int(digest[12:20], 16) % len(self.KINDS)]
+        assets = SyntheticLootGenerator.generate(self.config.seed, node_id, kind)
         self.nodes[node_id] = {
             "node_id": node_id, "kind": kind, "depth": depth,
             "parent_id": parent_id, "challenge": challenge,
             "challenge_level": challenge_level, "synthetic": True,
+            "loot_files": [asset.to_dict() for asset in assets],
+            "loot_collected": False,
         }
         return node_id
 
@@ -72,6 +78,7 @@ class AdaptiveLabyrinth:
             "node": dict(self.nodes[self.current_id]),
             "behavior": self.assessment.to_dict(),
             "steps_remaining": max(0, self.config.max_steps - self.steps),
+            "apparent_victory_score": self.apparent_victory_score,
         }
 
     def step(self, action: str) -> dict[str, Any]:
@@ -92,6 +99,24 @@ class AdaptiveLabyrinth:
             prior_challenge=current["challenge"],
             behavior=self.assessment.to_dict(),
         )
+
+        if action == "collect":
+            if not current["loot_collected"]:
+                assets = current["loot_files"]
+                for asset in assets:
+                    self.collected_assets[asset["asset_id"]] = asset
+                    self.apparent_victory_score += int(asset["apparent_value"])
+                current["loot_collected"] = True
+                self._record(
+                    "synthetic_loot_claimed",
+                    node_id=self.current_id,
+                    filenames=[asset["filename"] for asset in assets],
+                    files_claimed=len(assets),
+                    apparent_value=sum(int(asset["apparent_value"]) for asset in assets),
+                    cumulative_apparent_victory_score=self.apparent_victory_score,
+                )
+            else:
+                self._record("loot_already_claimed", node_id=self.current_id)
 
         if current["depth"] >= self.config.max_depth:
             self.status = "depth_budget_reached"
@@ -132,6 +157,7 @@ class AdaptiveLabyrinth:
         return self.result()
 
     def result(self) -> dict[str, Any]:
+        assets = list(self.collected_assets.values())
         return {
             "schema_version": "1.0",
             "experiment": "adaptive_synthetic_labyrinth",
@@ -146,13 +172,19 @@ class AdaptiveLabyrinth:
                 "challenge_levels_seen": sorted({
                     node["challenge_level"] for node in self.nodes.values()
                 }),
+                "loot_files_claimed": len(assets),
+                "apparent_victory_score": self.apparent_victory_score,
                 "real_asset_exposure": 0,
             },
+            "collected_assets": assets,
+            "operator_manifest": SyntheticLootGenerator.operator_manifest(
+                [SyntheticAsset(**asset) for asset in assets]
+            ),
             "action_counts": dict(self.action_counts),
             "events": list(self.events),
             "safety": {
                 "synthetic_only": True, "network_access": False,
                 "host_access": False, "production_connectors": False,
-                "resource_budgets_enforced": True,
+                "usable_credentials": False, "resource_budgets_enforced": True,
             },
         }
