@@ -11,6 +11,12 @@ from typing import Any
 POLICIES = ("static_decoy", "random_walk", "greedy", "bfs", "dfs", "adaptive")
 POLICY_ALIASES = {"baseline": "bfs"}
 
+# Hard ceilings protect callers that construct EngineConfig from untrusted input.
+MAX_NODES_LIMIT = 4096
+MAX_DEPTH_LIMIT = 64
+MAX_STEPS_LIMIT = 4096
+MAX_BRANCHING_LIMIT = 8
+
 
 @dataclass(frozen=True)
 class EngineConfig:
@@ -21,12 +27,16 @@ class EngineConfig:
     branching_factor: int = 3
 
     def validate(self) -> None:
-        if self.max_nodes < 1:
-            raise ValueError("max_nodes must be >= 1")
-        if self.max_depth < 0 or self.max_steps < 0:
-            raise ValueError("max_depth and max_steps must be >= 0")
-        if not 1 <= self.branching_factor <= 8:
-            raise ValueError("branching_factor must be between 1 and 8")
+        if not 1 <= self.max_nodes <= MAX_NODES_LIMIT:
+            raise ValueError(f"max_nodes must be between 1 and {MAX_NODES_LIMIT}")
+        if not 0 <= self.max_depth <= MAX_DEPTH_LIMIT:
+            raise ValueError(f"max_depth must be between 0 and {MAX_DEPTH_LIMIT}")
+        if not 0 <= self.max_steps <= MAX_STEPS_LIMIT:
+            raise ValueError(f"max_steps must be between 0 and {MAX_STEPS_LIMIT}")
+        if not 1 <= self.branching_factor <= MAX_BRANCHING_LIMIT:
+            raise ValueError(f"branching_factor must be between 1 and {MAX_BRANCHING_LIMIT}")
+        if isinstance(self.seed, bool) or not isinstance(self.seed, int):
+            raise ValueError("seed must be an integer")
 
 
 @dataclass
@@ -142,11 +152,10 @@ class DeceptionEngine:
                 self._record("depth_budget_reached", current, "Maximum depth reached")
                 continue
 
-            children = self.children[current.node_id]
-            for child in children:
+            for child in self.children[current.node_id]:
                 self._record("decoy_generated", child, "Pre-generated in the shared static graph")
                 frontier.append(child)
-            if not children and len(self.nodes) >= self.config.max_nodes:
+            if not self.children[current.node_id] and len(self.nodes) >= self.config.max_nodes:
                 self._record("node_budget_reached", current, "Maximum node count reached")
 
         if frontier and steps >= self.config.max_steps:
