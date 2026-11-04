@@ -126,3 +126,27 @@ jobs:
         run: |
           chmod +x lab/podman/run-agent-simulation.sh
           SENTINEL_IMAGE=sentinel-core:ci ./lab/podman/run-agent-simulation.sh
+
+  reproducible-benchmark:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.11"
+      - name: Install SENTINEL
+        run: python -m pip install .
+      - name: Run matched 30-seed six-policy benchmark
+        run: |
+          sentinel compare --seeds $(seq 1 30) --steps 20 --max-nodes 64 --max-depth 8 --branching-factor 3 --jsonl > sentinel-results.jsonl
+          test -s sentinel-results.jsonl
+      - name: Upload reproducible benchmark artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: sentinel-six-policy-results-${{ github.sha }}
+          path: sentinel-results.jsonl
+          if-no-files-found: error
+          retention-days: 90
