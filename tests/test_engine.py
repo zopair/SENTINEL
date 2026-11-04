@@ -33,3 +33,16 @@ def test_invalid_config_rejected():
 def test_core_reports_zero_real_asset_exposure():
     result = DeceptionEngine().run()
     assert result["metrics"]["real_asset_exposure"] == 0
+
+
+def test_unknown_policy_rejected():
+    with pytest.raises(ValueError):
+        DeceptionEngine().run(policy="unknown")
+
+
+def test_adaptive_policy_obeys_all_budgets():
+    config = EngineConfig(seed=11, max_nodes=12, max_depth=3, max_steps=7)
+    result = DeceptionEngine(config).run(policy="adaptive")
+    assert result["metrics"]["nodes_created"] <= config.max_nodes
+    assert result["metrics"]["steps"] <= config.max_steps
+    assert all(event["depth"] <= config.max_depth for event in result["events"])
