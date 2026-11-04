@@ -44,7 +44,7 @@ pytest
 
 sentinel run --seed 7 --steps 20 --policy adaptive
 sentinel profiles --seeds 7 17 27
-sentinel compare --seeds $(seq 1 30) --steps 20 --jsonl > results.jsonl
+sentinel compare --seeds $(seq 1 30) --steps 20 --jsonl > results.jsonl\nsentinel web --port 8765
 ~~~
 
 For reproducibility, preserve the exact command, package version, seed list, and output file with any reported result. The CLI default comparison uses 30 seeds.
@@ -70,7 +70,7 @@ Read the Threat Model before interpreting results or extending the runtime. The 
 [Browser Research Lab](lab.html) · [Research Guide](docs/RESEARCH_GUIDE.md) · [Validation Protocol](docs/VALIDATION_PROTOCOL.md) · [Architecture](docs/ARCHITECTURE.md) · [Threat Model](docs/THREAT_MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Research references](docs/RESEARCH_SOURCES.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Security policy](SECURITY.md)
 
 ## Browser Visual Lab and JSONL analytics
-The SENTINEL Pages interface separates its illustrative browser maze from imported engine/CI evidence. The browser demonstration is not the Python engine or a live attack environment. The JSONL reader parses a selected file locally in the browser; it does not upload that file. Sample data is illustrative only. To view actual engine results, generate results.jsonl with the command above and load it in the page. The complete research definitions, metric semantics, statistical assumptions, threat boundaries, and reproduction procedure are in the Research Guide.
+The browser Research Lab has two clearly separated modes: an illustrative browser model, and an optional real-engine mode served locally by the standard-library HTTP server. Run `sentinel web --port 8765` from a source checkout and open `http://127.0.0.1:8765/`; the server binds to loopback only and accepts bounded allowlisted experiment requests. The JSONL reader parses selected CLI/CI files locally and does not upload them. The static GitHub Pages site cannot execute the Python engine; use the local server for real interactive engine runs. The complete research definitions, metric semantics, statistical assumptions, threat boundaries, and reproduction procedure are in the Research Guide.
 
 ## Citation
 See CITATION.cff for citation metadata. Cite the exact commit and experiment configuration used.
