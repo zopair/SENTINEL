@@ -35,3 +35,16 @@
 
 ## Release gates
 Passing tests, dependency and secret scans, documented threat model, reproducible configuration, and explicit feature-status claims. Any real-asset exposure or lab escape blocks release.
+
+
+## v0.4 — Containment Gateway foundation
+
+- [x] Add immutable run specifications pinned to full SHA-256 image digests.
+- [x] Add bounded CPU, memory, PID, wall-clock, output, and tmpfs policy.
+- [x] Require rootless Podman and fail closed if rootless mode cannot be verified.
+- [x] Enforce networkless, read-only, non-root, no-capability, no-new-privileges execution with no host mounts.
+- [x] Bound captured output and clean up the disposable container on timeout or output overflow.
+- [ ] Add bounded adversarial fixtures and verify lifecycle cleanup in Linux CI.
+- [ ] Add an external-agent adapter only after the adversarial containment gate passes.
+
+The gateway foundation does not yet launch third-party agents by default and is not an independently validated security boundary.
