@@ -11,7 +11,7 @@ def test_profile_evaluation_is_deterministic():
 
 def test_all_profiles_obey_the_same_resource_budgets():
     result = evaluate_profiles([7], max_nodes=10, max_depth=3, max_steps=5)
-    assert len(result["runs"]) == 5
+    assert len(result["runs"]) == 6
     for run in result["runs"]:
         metrics = run["metrics"]
         assert metrics["nodes_created"] <= 10
