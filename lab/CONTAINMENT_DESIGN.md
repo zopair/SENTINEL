@@ -11,6 +11,16 @@ The current SENTINEL engine is an in-memory synthetic simulator. This lab scaffo
 4. The runner requests: no network, read-only root filesystem, no host mounts, all capabilities dropped, no-new-privileges, non-root UID, PID/memory/CPU limits, and a small no-exec temporary filesystem.
 
 ## Build and run
+
+Run the configuration preflight before starting the synthetic container:
+
+```bash
+chmod +x lab/podman/preflight.sh lab/podman/run-synthetic.sh
+./lab/podman/preflight.sh
+```
+
+The preflight inspects the effective created-container settings. It does not start the workload and is not an escape test. See [lab guide](README.md).
+
 ```bash
 podman build -f lab/podman/Containerfile -t sentinel-core:local .
 chmod +x lab/podman/run-synthetic.sh
