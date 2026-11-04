@@ -41,6 +41,8 @@ def _validate(record: Any, line_number: int) -> TelemetryRecord:
     if record.get("schema_version") != SCHEMA_VERSION:
         raise ValueError(prefix + "unsupported or missing schema_version")
     kind = record.get("record_type")
+    if not isinstance(kind, str):
+        raise ValueError(prefix + "record_type must be a string")
     expected = {
         "event": EVENT_FIELDS,
         "run_summary": SUMMARY_FIELDS,
@@ -55,7 +57,7 @@ def _validate(record: Any, line_number: int) -> TelemetryRecord:
         _require_int(record["seed"], "seed", minimum=-(2**63))
         _require_int(record["sequence"], "sequence", minimum=1)
         _require_int(record["depth"], "depth")
-        if record["policy"] not in {"baseline", "adaptive"}:
+        if not isinstance(record["policy"], str) or record["policy"] not in {"baseline", "adaptive"}:
             raise ValueError(prefix + "invalid policy")
         for field in ("node_id", "event_type", "detail"):
             if not isinstance(record[field], str) or len(record[field]) > 2048:
