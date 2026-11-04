@@ -18,6 +18,7 @@ class SentinelExplainer(Scene):
         self.opening()
         self.labyrinth()
         self.evidence()
+        self.statistical_evidence()
         self.bounds_and_lab()
         self.closing()
 
