@@ -76,7 +76,12 @@ The comparison exports per-policy means, standard deviations, descriptive normal
 Read the Threat Model before interpreting results or extending the runtime. The core engine is in-memory and does not connect to production systems or perform outbound network operations. Do not connect this prototype to production networks or expose it as a public honeypot.
 
 ## Documentation
-[Browser Research Lab](lab.html) · [Research Guide](docs/RESEARCH_GUIDE.md) · [Validation Protocol](docs/VALIDATION_PROTOCOL.md) · [Architecture](docs/ARCHITECTURE.md) · [Threat Model](docs/THREAT_MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Research references](docs/RESEARCH_SOURCES.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Security policy](SECURITY.md)
+
+- **Start here:** [Browser Research Lab](lab.html) · [Research Guide](docs/RESEARCH_GUIDE.md) · [Architecture](docs/ARCHITECTURE.md)
+- **Research & evidence:** [Validation Protocol](docs/VALIDATION_PROTOCOL.md) · [Research Sources](docs/RESEARCH_SOURCES.md) · [Threat Model](docs/THREAT_MODEL.md)
+- **Runtime & containment:** [Agent Runtime](docs/AGENT_RUNTIME.md) · [Containment Gateway](docs/CONTAINMENT_GATEWAY.md) · [Computing and Isolation Options](docs/COMPUTING_AND_ISOLATION_OPTIONS.md)
+- **Project planning & tooling:** [Roadmap](docs/ROADMAP.md) · [Open-Source Tooling](docs/OPEN_SOURCE_TOOLING.md)
+- **Security reporting:** [Security Policy](SECURITY.md)
 
 ## Browser Visual Lab and JSONL analytics
 The browser Research Lab has two clearly separated modes: an illustrative browser model, and an optional real-engine mode served locally by the standard-library HTTP server. Run `sentinel web --port 8765` from a source checkout and open `http://127.0.0.1:8765/`; the server binds to loopback only and accepts bounded allowlisted experiment requests. The JSONL reader parses selected CLI/CI files locally and does not upload them. The static GitHub Pages site cannot execute the Python engine; use the local server for real interactive engine runs. The complete research definitions, metric semantics, statistical assumptions, threat boundaries, and reproduction procedure are in the Research Guide.
